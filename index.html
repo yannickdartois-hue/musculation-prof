@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#4d7c0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Muscu Prof">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-32.png">
+<title>Musculation · Prof</title>
+<style>
+@font-face{font-family:"Archivo";src:url(polices/archivo.woff2) format("woff2");font-weight:100 900;font-stretch:62% 125%;font-display:swap}
+@font-face{font-family:"Atkinson";src:url(polices/atkinson-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Atkinson";src:url(polices/atkinson-700.woff2) format("woff2");font-weight:700;font-display:swap}
+:root{--act:#4d7c0f;--act-fonce:#304d09;--act-pale:#eef5e3;--sol:#f3f5f8;--craie:#fff;--encre:#1c2128;--repere:#5b6470;--trait:#dde2e8;--alerte:#b42318;--d:"Archivo",Arial,sans-serif;--t:"Atkinson","Segoe UI",Roboto,Arial,sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--sol);color:var(--encre);font:18px/1.4 var(--t)}
+button,input,select,textarea{font:inherit;color:inherit}
+.barre{display:flex;align-items:center;gap:12px;padding:10px 18px;background:var(--craie)}
+.barre img{width:40px;height:40px;border-radius:9px}.barre .app{flex:1;font-weight:700}.barre small{display:block;font-weight:400;color:var(--repere);font-size:15px}
+.trace{height:8px;background:var(--act)}
+nav{display:flex;gap:8px;padding:10px 18px;flex-wrap:wrap;max-width:1100px;margin:0 auto}
+nav button{min-height:52px;padding:0 18px;border-radius:14px;border:2px solid var(--trait);background:var(--craie);font-weight:700}
+nav button.ici{background:var(--act);border-color:var(--act);color:#fff}
+main{max-width:1100px;margin:0 auto;padding:0 18px 40px}
+h2{font:800 32px/1.05 var(--d);font-stretch:74%;margin:12px 0 8px}h3{font:800 23px/1.1 var(--d);font-stretch:78%;margin:0 0 8px}
+.carte{background:var(--craie);border:1px solid var(--trait);border-radius:16px;padding:16px;margin:12px 0}.carte.act{border:2px solid var(--act)}
+.rangee{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.bt{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 18px;border-radius:14px;border:2px solid var(--encre);background:var(--craie);font-weight:700;cursor:pointer}
+.bt.act{background:var(--act);border-color:var(--act);color:#fff}.bt.noir{background:var(--encre);color:#fff}
+.lien{background:none;border:0;text-decoration:underline;font-weight:700;color:var(--act-fonce);min-height:44px;cursor:pointer}.lien.danger{color:var(--alerte)}
+input[type=text],input[type=url],textarea{width:100%;min-height:52px;padding:8px 12px;border-radius:12px;border:1.5px solid var(--trait);background:var(--craie)}
+label.ch{display:block;font-weight:700;margin:12px 0 4px}
+.small{font-size:max(15px,var(--fs-min,15px))}.muted{color:var(--repere)}.ok{background:#e7f6ec;color:#14532d;padding:8px 12px;border-radius:10px}
+.alerte{background:#fde8e6;color:#7f1d1d;padding:8px 12px;border-radius:10px}
+.puces{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.puces button{min-height:52px;padding:0 16px;border-radius:14px;border:2px solid var(--trait);background:var(--craie);font:800 19px var(--d)}
+.puces button.ici{background:var(--act);border-color:var(--act);color:#fff}.puces small{font:700 14px var(--t);opacity:.8;margin-left:4px}
+summary{cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center}
+.liste{columns:2;font-size:16px}
+.tbw{overflow-x:auto}.tb{width:100%;border-collapse:collapse;font-size:16px}.tb th,.tb td{border-top:1px solid var(--trait);padding:7px 8px 7px 0;text-align:left;vertical-align:top}
+.voile{position:fixed;inset:0;z-index:50;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.fen{background:var(--craie);border-radius:18px;max-width:520px;width:100%;max-height:92vh;overflow:auto;padding:18px}
+.qrbox{display:flex;justify-content:center;background:#fff;padding:10px;border-radius:12px;margin:10px 0}.qrbox svg{width:min(80vw,460px);height:auto}
+.demo{background:#fff4e0;border:2px solid #b45309;border-radius:12px;padding:8px 12px}
+.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#1c2128;color:#fff;padding:12px 18px;border-radius:14px;z-index:99;font-weight:700}
+#affiche{display:none}
+body.impr-affiche>*:not(#affiche){display:none!important}
+body.impr-affiche #affiche{display:block;padding:20px;background:#fff}
+#affiche h1{font:800 30px var(--d);margin:0 0 10px}.aff2{display:grid;grid-template-columns:1fr 1fr;gap:24px}.aff2 svg{width:100%;height:auto}
+#affiche .pied{font-size:14px;color:#555}
+@media print{.noprint{display:none}#affiche{padding:0}}
+</style>
+<style>@media print{:root{--fs-min:0px}}</style>
+<link rel="stylesheet" href="eps-charte-v1.css">
+</head>
+<body>
+<header class="barre"><img src="icon-192.png" alt=""><div class="app">MUSCULATION · OUTIL PROF<small>Lycée Georges Pompidou · CA5 Terminale</small></div><button type="button" class="bt" onclick="EPSAide.ouvrir()" aria-label="Mode d’emploi">?</button></header>
+<div class="trace"></div>
+<nav id="nav"></nav>
+<main id="main"></main>
+<script src="muscu-donnees.js"></script>
+<script src="qrcode.js"></script>
+<script src="eps-code.js"></script>
+<script src="prof.js"></script>
+<script src="aide.js"></script>
+<script src="eps-aide.js"></script>
+<script src="eps-maj.js"></script>
+</body>
+</html>
