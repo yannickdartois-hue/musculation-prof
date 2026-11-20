@@ -152,18 +152,47 @@ async function importerCarnets(files){
   const msgs=[];for(const f of files){try{msgs.push(importerCarnet(JSON.parse(await f.text()),f.name))}catch(e){msgs.push(e.message)}}
   sauver();rendre();fen(`<h3>Carnets importés</h3><ul class="small">${msgs.map(m=>`<li>${esc(m)}</li>`).join('')}</ul><button type="button" class="bt" data-fermer>Fermer</button>`);
 }
+/* v1.5 : AFL2 (analyse de ses exercices) et AFL3 (coaching du partenaire), S4 à S7, lus dans les carnets */
+const S_AFL=['S4','S5','S6','S7'];
+function exosDe(e,S){return Object.entries(((e.seances||{})[S]||{}).exos||{}).filter(([,x])=>x&&x.real)}
+function statsAfl(b,e){
+  const a2={ex:0,an:0,coh:0,obR:0,obP:0},a3={fi:0,niv:0,con:0,aideO:0,aideT:0,obj:0,ten:0};
+  S_AFL.forEach(S=>exosDe(e,S).forEach(([,x])=>{a2.ex++;const nx=x.next||{};if(x.ressenti&&x.ressenti.note&&x.rir&&nx.c){a2.an++;if(nx.ok||(nx.pq||'').trim())a2.coh++}if(x.obp){a2.obR++;if(x.obp==='oui')a2.obP++}}));
+  b.e.filter(p=>p!==e).forEach(p=>{
+    const suiv=(k,at)=>{for(let j=k+1;j<=9;j++){const y=(((p.seances||{})['S'+j]||{}).exos||{})[at];if(y&&y.real)return y}return null};
+    S_AFL.forEach(S=>exosDe(p,S).forEach(([at,x])=>{const av=x.avis;if(!av||av.par!==e.nom)return;
+      const plein=av.conseil||av.cle||(av.signes||[]).length;if(!plein)return;a3.fi++;
+      a3.niv=Math.max(a3.niv,av.obj&&av.obj.k&&av.obj.v!==''&&av.obj.v!=null?3:av.propres!=null?2:1);
+      const y=suiv(+S.slice(1),at);
+      if(av.conseil){a3.con++;if(y&&y.aide){a3.aideT++;if(y.aide==='1')a3.aideO++}}
+      if(av.obj&&av.obj.k&&av.obj.v!==''&&av.obj.v!=null){if(y){a3.obj++;if(objTenuM(av.obj,y.real))a3.ten++}}   // compté seulement une fois vérifiable
+    }))});
+  return {a2,a3};
+}
+const pc=(a,b)=>b?Math.round(100*a/b)+' %':'—';
+/* lecture qualitative : justifications de l'élève et conseils donnés au partenaire */
+function lireAfl(id,i){
+  const b=DB.carnets[id],e=b&&b.e[+i];if(!e)return;const NQ=Object.fromEntries(NEXT_Q.map(q=>[q[0],q[1]])),RQ=Object.fromEntries(RIR_Q.map(q=>[q[0],q[1]])),nomA=at=>(ATELIERS.find(a=>a.id===at)||{}).nom||at;
+  const a2=[],a3=[];
+  S_AFL.forEach(S=>{exosDe(e,S).forEach(([at,x])=>{const nx=x.next||{};if(!nx.c&&!x.rir)return;
+    a2.push(`<tr><td>${S}</td><td>${esc(nomA(at))}</td><td>${x.ressenti&&x.ressenti.note||'—'} · ${esc(RQ[x.rir]||'—')}</td><td>${esc(NQ[nx.c]||'—')}${nx.ok===false?' <b style="color:#b91c1c">≠ appli</b>':''}</td><td>${esc(nx.pq||'')}</td></tr>`)});
+    b.e.filter(p=>p!==e).forEach(p=>exosDe(p,S).forEach(([at,x])=>{const av=x.avis;if(!av||av.par!==e.nom)return;
+      a3.push(`<tr><td>${S}</td><td>${esc(nomA(at))}</td><td>${av.cle==='1'?'tenu':av.cle==='0'?'à revoir':'—'}${(av.signes||[]).length?' · '+esc(av.signes.join(', ')):''}</td><td>${av.propres!=null?av.propres:'—'}</td><td>${esc(av.conseil||'')}${x.aide?` (${x.aide==='1'?'utile':'pas utile'})`:''}</td><td>${av.obj&&av.obj.k?esc(av.obj.k+' '+av.obj.v):''}</td></tr>`)}))});
+  fen(`<h3>${esc(e.nom)} · AFL2 et AFL3</h3><h4>Ses analyses (AFL2)</h4>${a2.length?`<div class="tbw"><table class="tb small"><tr><th></th><th>Exercice</th><th>Ressenti · réserve</th><th>Choix</th><th>Pourquoi</th></tr>${a2.join('')}</table></div>`:'<p class="muted">Rien encore.</p>'}
+   <h4>Son coaching (AFL3)</h4>${a3.length?`<div class="tbw"><table class="tb small"><tr><th></th><th>Exercice</th><th>Point clé · signes</th><th>Propres</th><th>Conseil</th><th>Objectif</th></tr>${a3.join('')}</table></div>`:'<p class="muted">Rien encore.</p>'}<button type="button" class="bt" data-fermer>Fermer</button>`,true);
+}
 function lignesCarnets(){
   const L=[];Object.values(DB.carnets).forEach(b=>b.e.forEach(e=>{
     const seances=SEANCES.filter(s=>e.seances[s.id]&&Object.keys(e.seances[s.id]).length||(s.id==='S2'&&Object.keys(e.tests||{}).length)).map(s=>s.id);
-    L.push({classe:b.classe||'',nom:e.nom,binome:b.e.filter(x=>x!==e).map(x=>x.nom).join(', '),rm:ATELIERS_TEST.filter(id=>e.rm[id]).length,mob:e.choix&&e.choix.mob,proj:e.projet&&e.projet.exos?e.projet.exos.length:0,afl:e.afl||{},aj:(e.ajust||[]).length,seances,exp:b.exporte||''});
+    L.push({classe:b.classe||'',nom:e.nom,binome:b.e.filter(x=>x!==e).map(x=>x.nom).join(', '),rm:ATELIERS_TEST.filter(id=>e.rm[id]).length,mob:e.choix&&e.choix.mob,proj:e.projet&&e.projet.exos?e.projet.exos.length:0,afl:e.afl||{},aj:(e.ajust||[]).length,seances,exp:b.exporte||'',st:statsAfl(b,e),id:b.id,i:b.e.indexOf(e)});
   }));return L;
 }
 function vCarnets(){
   const L=lignesCarnets(),C=[...new Set(L.map(x=>x.classe))].sort();
   return `<h2>Carnets reçus</h2><section class="carte"><p class="small">Déposez ici les fichiers que les binômes ont envoyés dans le Nuage (un ou plusieurs à la fois). Le plus récent de chaque binôme est gardé.</p><label class="bt act">📂 Importer des carnets<input id="carnetsFic" type="file" accept=".json,application/json" multiple hidden></label></section>
   ${L.length?C.map(c=>{const lc=L.filter(x=>x.classe===c).sort((a,b)=>norm(a.nom).localeCompare(norm(b.nom))),inscrits=(DB.classes[c]||{}).eleves||[],manque=inscrits.filter(n=>!lc.some(x=>norm(x.nom)===norm(n)));
-   return `<section class="carte"><h3>${esc(c||'Sans classe')} · ${lc.length} élève(s)</h3><div class="tbw"><table class="tb"><tr><th>Élève</th><th>Binôme</th><th>Séances</th><th>Test 10 RM</th><th>Mobile</th><th>Projet</th><th>Ajust.</th><th>AFL2/3 · rôle</th><th>Dernier envoi</th></tr>
-    ${lc.map(x=>`<tr><td><b>${esc(x.nom)}</b></td><td class="small">${esc(x.binome)}</td><td class="small">${x.seances.join(' ')}</td><td>${x.rm}/${ATELIERS_TEST.length}</td><td>${x.mob?esc(MOBILES[x.mob].nom):'—'}</td><td>${x.proj?x.proj+' ex.':'—'}</td><td>${x.aj}</td><td class="small">${esc(x.afl.rep||'—')} · ${esc(x.afl.role?EVAL.roles.find(r=>r[0]===x.afl.role)[1]:'—')}</td><td class="small">${esc(x.exp.slice(0,10))}</td></tr>`).join('')}</table></div>
+   return `<section class="carte"><h3>${esc(c||'Sans classe')} · ${lc.length} élève(s)</h3><div class="tbw"><table class="tb"><tr><th>Élève</th><th>Binôme</th><th>Séances</th><th>Test 10 RM</th><th>Mobile</th><th>Projet</th><th>Ajust.</th><th>AFL2/3 · rôle</th><th title="S4 à S7 : exercices analysés (ressenti, répétitions, suite), choix cohérents ou justifiés, objectifs du coach repris">AFL2 · analyse</th><th title="S4 à S7 : fiches coach remplies, niveau atteint, conseils jugés utiles par le partenaire, objectifs tenus">AFL3 · coaching</th><th>Dernier envoi</th></tr>
+    ${lc.map(x=>`<tr><td><button type="button" class="lien" data-lire="${esc(x.id)}" data-i="${x.i}" title="Lire ses analyses et son coaching"><b>${esc(x.nom)}</b></button></td><td class="small">${esc(x.binome)}</td><td class="small">${x.seances.join(' ')}</td><td>${x.rm}/${ATELIERS_TEST.length}</td><td>${x.mob?esc(MOBILES[x.mob].nom):'—'}</td><td>${x.proj?x.proj+' ex.':'—'}</td><td>${x.aj}</td><td class="small">${esc(x.afl.rep||'—')} · ${esc(x.afl.role?((EVAL.roles.find(r=>r[0]===x.afl.role)||[])[1]||(EVAL.roleAncien||{})[x.afl.role]||x.afl.role):'—')}</td><td class="small">${x.st.a2.ex?`<b>${x.st.a2.an}/${x.st.a2.ex}</b> analysés<br>cohérents ${pc(x.st.a2.coh,x.st.a2.an)}${x.st.a2.obR?`<br>objectifs repris ${x.st.a2.obP}/${x.st.a2.obR}`:''}`:'—'}</td><td class="small">${x.st.a3.fi?`<b>${x.st.a3.fi}</b> fiches · niv. ${x.st.a3.niv}<br>conseils utiles ${x.st.a3.aideT?x.st.a3.aideO+'/'+x.st.a3.aideT:'—'}${x.st.a3.obj?`<br>objectifs tenus ${x.st.a3.ten}/${x.st.a3.obj}`:''}`:'—'}</td><td class="small">${esc(x.exp.slice(0,10))}</td></tr>`).join('')}</table></div>
     ${manque.length?`<p class="small muted">Pas encore de carnet : ${manque.map(esc).join(', ')}.</p>`:''}</section>`}).join(''):'<p class="muted">Aucun carnet reçu.</p>'}
   <p class="small muted">La notation (AFL1, AFL2, AFL3) à partir des carnets viendra dans une prochaine version.</p>`;
 }
@@ -179,6 +208,7 @@ function telecharger(nom,txt){const a=document.createElement('a');a.href=URL.cre
 document.addEventListener('click',async ev=>{
   const t=ev.target.closest('button');if(!t)return;const d=t.dataset;
   if(d.vue){DB.vue=d.vue;sauver();rendre();return}
+  if(d.lire){lireAfl(d.lire,d.i);return}
   if(d.classe){DB.classe=d.classe;sauver();rendre();return}
   const c=DB.classe;
   switch(d.act){
