@@ -106,7 +106,7 @@ if(mode==='ajout'){const r=C.map(c=>{const ka=new Set(avant[c].map(cleNomL)),nv=
 const VUES=[['classes','👥 Classes'],['carnets','📒 Carnets'],['sauvegarde','💾 Sauvegarde']];
 function rendre(){
   $('#nav').innerHTML=VUES.map(([k,t])=>`<button type="button" class="${DB.vue===k?'ici':''}" data-vue="${k}">${t}</button>`).join('');
-  $('#main').innerHTML=(DEMO?`<p class="demo">👀 Mode démo : rien n'est enregistré. <a href="./">Quitter</a></p>`:'')+({classes:vClasses,carnets:vCarnets,sauvegarde:vSauvegarde}[DB.vue]||vClasses)();
+  $('#main').innerHTML=(DEMO?`<p class="demo demo-bandeau">👀 Mode démo : rien n'est enregistré. <a href="./">Quitter</a></p>`:'')+({classes:vClasses,carnets:vCarnets,sauvegarde:vSauvegarde}[DB.vue]||vClasses)();
 }
 function vClasses(){
   const C=Object.keys(DB.classes).sort(),c=DB.classes[DB.classe]?DB.classe:C[0],L=c?DB.classes[c]:null;DB.classe=c||'';
@@ -120,7 +120,8 @@ function vClasses(){
    <p class="small muted">Les binômes scannent le QR de la classe dans l'appli élève : la liste des noms s'affiche, ils choisissent les leurs. Le QR affiché un jour de cours ouvre aussi la séance choisie dans « Code du cours », sans code à taper.</p>
    <label class="ch" for="lien">Lien du dépôt Nuage de la classe (facultatif)</label><input id="lien" type="url" value="${esc(L.lien||'')}" placeholder="https://nuage03.apps.education.fr/s/…">
    <details><summary>Liste des élèves</summary><ol class="liste">${L.eleves.map(n=>`<li>${esc(n)}</li>`).join('')}</ol></details>
-   <p><button type="button" class="lien danger" data-act="supprClasse">Supprimer cette classe</button></p></section>`:''}`;
+   <p><button type="button" class="lien danger" data-act="supprClasse">Supprimer cette classe</button></p></section>`:''}
+  ${DEMO?'':`<section class="carte"><h3>Démonstration</h3><p class="small muted">Pour découvrir l'outil avec une classe fictive. Rien n'est enregistré : vos vraies classes et carnets ne sont pas touchés.</p><a class="bt" href="?demo">🎭 Ouvrir la démo</a></section>`}`;
 }
 async function qrClasse(c){
   const L=DB.classes[c];if(!L.cc){L.cc=EPSCode.nouvelleCle();sauver()}
@@ -194,7 +195,7 @@ document.addEventListener('change',async ev=>{
   if(t.id==='impFic'&&t.files.length){await importerListe([...t.files],'',$('#impNom').value.trim());t.value='';return}
   if(t.id==='lien'){DB.classes[DB.classe].lien=t.value.trim();sauver();toast('Lien enregistré : il partira avec le QR de la classe.');return}
   if(t.id==='carnetsFic'&&t.files.length){await importerCarnets([...t.files]);t.value='';return}
-  if(t.id==='restFic'&&t.files.length){try{const o=JSON.parse(await t.files[0].text());if(o.app!=='musculation-prof')throw new Error('Ce n\'est pas une sauvegarde de l\'outil prof musculation.');
+  if(t.id==='restFic'&&t.files.length){try{const o=JSON.parse(await (window.EPSCoffre?EPSCoffre.lireFichier(t.files[0]):t.files[0].text()));if(o.app!=='musculation-prof')throw new Error('Ce n\'est pas une sauvegarde de l\'outil prof musculation.');
     if(!confirm('Remplacer toutes les données de cet iPad par la sauvegarde ?'))return;DB=Object.assign({classes:{},carnets:{}},o);sauver();rendre();toast('Sauvegarde restaurée.')}catch(e){alert(e.message)}t.value='';}
 });
 rendre();
