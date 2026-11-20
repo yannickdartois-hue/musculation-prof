@@ -113,9 +113,9 @@ const ATELIERS = [
  {id:"sdtj", n:0, nom:"Soulevé de terre jambes semi-tendues", zone:"bas", groupe:"Ischio-jambiers", muscles:"Ischio-jambiers, fessiers, lombaires", support:"hreg", type:"charge", menu:true, depart:6,
   crit:["Debout, un haltère dans chaque main devant les cuisses, genoux légèrement fléchis et fixes.","Pencher le buste en poussant les fesses vers l'arrière, dos plat, haltères le long des jambes.","Descendre jusqu'à mi-tibias, ou dès que le dos veut s'arrondir, puis remonter en serrant les fesses."],
   resp:"Inspirer en descendant, souffler en remontant.", secu:"Dos plat obligatoire : dos rond = arrêt de la série. Démonstration en S1, charges modérées.", moins:"Haltères plus légers, descente jusqu'aux genoux.", plus:"Descente en 3 s."},
- {id:"hip", n:0, nom:"Hip thrust haltère", zone:"bas", groupe:"Fessiers", muscles:"Grands fessiers, ischio-jambiers", support:"hreg", type:"charge", menu:true, puissance:true, puissPct:[40,60], depart:8,
-  crit:["Le haut du dos appuyé sur le banc (ou les steps recouverts du tapis), pieds à plat, genoux à 90° en haut.","Un haltère posé en travers du bassin sur une serviette, tenu à deux mains.","Monter le bassin jusqu'à l'alignement épaules-hanches-genoux, serrer les fesses 1 s, redescendre."],
-  resp:"Souffler en montant.", secu:"Banc ou steps calés contre un mur ; pas de cambrure en haut (regard vers les genoux).", moins:"Haltère plus léger.", plus:"Pause de 2 s en haut."},
+ {id:"hip", n:0, nom:"Hip thrust au sol (pont fessier) haltère", zone:"bas", groupe:"Fessiers", muscles:"Grands fessiers, ischio-jambiers", support:"hreg", type:"charge", menu:true, puissance:true, puissPct:[40,60], depart:8,
+  crit:["Allongé sur le dos sur un tapis, pieds à plat près des fesses, écartés largeur de hanches.","Un haltère posé en travers du bassin sur une mousse ou un tapis plié, tenu à deux mains.","Monter le bassin jusqu'à l'alignement épaules-hanches-genoux, serrer les fesses 1 s, redescendre."],
+  resp:"Souffler en montant.", secu:"Haltère toujours calé sur la mousse ; pas de cambrure en haut (regard vers les genoux).", moins:"Haltère plus léger.", plus:"Pause de 2 s en haut."},
  /* Anciens ateliers de puissance au poids du corps : échauffement seulement depuis la v2.0 */
  {id:"sjump", n:0, nom:"Squat jump", zone:"bas", groupe:"Cuisses et fessiers", muscles:"Quadriceps, fessiers, mollets", support:"pdc", type:"variante", sautLancer:true,
   niveaux:["Saut extension depuis demi-squat, réception 2 s","Squat jump enchaîné","Squat jump avec haltères de 2 kg"],
@@ -130,8 +130,8 @@ const ATELIERS = [
 ];
 const atelier = id => ATELIERS.find(a => a.id === id);
 /* Illustrations des ateliers (fiche « Musculation : suivi du travail des élèves », dessins © Espace-musculation.com) */
-const IMAGES_AT = ["curlb", "mollets", "montee", "crunch", "squat", "extri", "rowb", "tirage", "elev", "twist", "dc", "fentes", "rowh", "curlh", "gainage", "pompes", "gainlat", "dips", "dch", "ecarte", "dm"];
-const IMAGES_SVG = ["pullover", "oiseau", "squath", "sdtj", "hip"];   // schémas provisoires (pas de dessin dans la fiche)
+const IMAGES_AT = ["curlb", "mollets", "montee", "crunch", "squat", "extri", "rowb", "tirage", "elev", "twist", "dc", "fentes", "rowh", "curlh", "gainage", "pompes", "gainlat", "dips", "dch", "ecarte", "dm", "oiseau", "squath", "sdtj"];
+const IMAGES_SVG = ["pullover", "hip"];   // dessins libres de droit (Claude, 20/11/2026)   // schémas provisoires (pas de dessin dans la fiche)
 const imgAtelier = id => IMAGES_AT.includes(id) ? 'img/ateliers/' + id + '.jpg' : IMAGES_SVG.includes(id) ? 'img/ateliers/' + id + '.svg' : null;
 /* v2.0 : le menu = 14 ateliers avec charges. Circuit de S1 sur les 14 (4 min par atelier), en alternant haut et bas du corps. */
 const MENU = ATELIERS.filter(a => a.menu).map(a => a.id);
@@ -213,7 +213,7 @@ const fiche = (titre, cat, duree, dispo, roles, deroul, crit, reussite, moins, p
 
 const SEANCES = [
  {id:"S1", titre:"Se situer, découvrir les ateliers", obj:"Connaître les règles de sécurité et les rôles du binôme ; découvrir les 14 ateliers du cycle (tous avec charges) ; commencer à mettre des mots sur ses ressentis.",
-  install:"Binômes formés pour tout le cycle. Les 14 ateliers du circuit sont installés en boucle sur le tatami, numérotés (2 bancs, steps empilés recouverts d'un tapis pour le rowing haltère et le hip thrust). Les élèves ouvrent l'appli élève et créent leur binôme.",
+  install:"Binômes formés pour tout le cycle. Les 14 ateliers du circuit sont installés en boucle sur le tatami, numérotés (2 bancs, steps empilés recouverts d'un tapis pour le rowing haltère, tapis et mousse pour le hip thrust au sol). Les élèves ouvrent l'appli élève et créent leur binôme.",
   bilan:"Quel mot as-tu choisi en fin d'échauffement ? Quel atelier t'a le plus fait travailler ?",
   prepare:["Le questionnaire « Je me situe » qui suggère un mobile.","Les premiers mots du nuage de la classe.","Le test 10 RM de la séance 2."],
   tl:[["Accueil, binômes, appli",10,"inst"],["Échauffement + premiers mots",8,"ech"],["Règles et rôles du binôme",3,"ex"],["Circuit : ateliers 1 à 7",28,"ex"],["Circuit : ateliers 8 à 14",28,"ex"],["Je me situe, envoi, rangement",5,"bil"]],
@@ -340,7 +340,7 @@ const SEANCES = [
    fiche("Envoi, rangement","Fin de séance",5,"Rangement puis envoi.","Un élève envoie le carnet.",["Rangement.","Envoi du carnet.","Bilan : quel mobile, pourquoi ?"],null,"Carnet envoyé.",null,null,null)
   ]},
  {id:"S7", titre:"Mon projet", obj:"Construire un projet cohérent avec son mobile (haut et bas du corps, 4 à 6 exercices) et le réaliser ; ajuster pour l'évaluation (l'AFL2 et l'AFL3 sont observées depuis la S4).",
-  install:"Les 14 ateliers sont accessibles. Banc de développé couché : 1 binôme ; barres triceps : 2 ; steps recouverts du tapis pour le rowing haltère et le hip thrust.",
+  install:"Les 14 ateliers sont accessibles. Banc de développé couché : 1 binôme ; barres triceps : 2 ; steps recouverts du tapis pour le rowing haltère ; tapis et mousse pour le hip thrust au sol.",
   bilan:"Ton projet tient-il dans la séance ? Qu'as-tu ajusté ?",
   prepare:["Le projet réalisé en S8 et S9.","L'évaluation AFL2 et AFL3."],
   tl:[["Accueil, installation",8,"inst"],["Échauffement personnalisé",10,"ech"],["Construire mon projet",12,"ex"],["Réaliser mon projet",38,"ex"],["Ajustements, envoi, rangement",8,"bil"]],
@@ -468,7 +468,7 @@ const POINT_CLE = {dc:"Fesses collées au banc, barre sur la poitrine", dch:"Cou
  rowb:"Dos plat, barre tirée vers le nombril", tirage:"Coudes pas plus haut que les épaules", dm:"Dos collé au dossier, pas de cambrure",
  curlb:"Coudes fixes, pas d'élan du buste", extri:"Coudes fixes, pointés vers le plafond", fentes:"Genou avant au-dessus de la cheville, buste droit",
  pullover:"Bras presque tendus, bassin au sol", oiseau:"Dos plat, les bras montent sur le côté", squath:"Dos droit, genoux dans l'axe des pieds",
- sdtj:"Dos plat, la barre frôle les cuisses", hip:"Bassin aligné en haut, menton rentré"};
+ sdtj:"Dos plat, les haltères frôlent les cuisses", hip:"Bassin aligné en haut, haltère calé sur la mousse"};
 /* répétitions en réserve (RIR) : « Combien aurais-tu pu en faire encore, propres ? » */
 const RIR_Q = [["0","0"],["12","1 ou 2"],["34","3 ou 4"],["5","5 et +"]];
 const RIR_CIBLE = {tonif:[2,2], volume:[1,1], puiss:[2,3]};   // index dans RIR_Q
