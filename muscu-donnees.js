@@ -3,8 +3,11 @@
    et dans musculation-eleves (appli élève). Le modifier dans cycle-musculation puis le recopier tel quel.
    Démarche « pratique auto-référencée et auto-régulée par les ressentis » d'après Laurent Lecomte
    (lycée A.-Daudet, Nîmes, avec son accord) et les travaux d'Aline Paintendre (STAPS Reims).
-   Paramètres des mobiles : cahier des charges du 13/11/2026 (force maximale retirée). */
-const MUSCU_VERSION = 'v1.0';
+   Paramètres des mobiles : cahier des charges du 13/11/2026 (force maximale retirée).
+   v2.0 (20/11/2026) : menu de 14 ateliers, uniquement avec charges (menu:true) ; les ateliers au poids du corps
+   servent à l'échauffement et restent décrits ici pour les anciens carnets. S1 circuit, S2-S3 tests (4 à 5 charges
+   max par séance), S4 tonification, S5 volume, S6 puissance (6 ateliers, puissPct) et choix, S7 projet, S8-S9 évaluation. */
+const MUSCU_VERSION = 'v2.0';
 const DUREE_PRATIQUE = 70;
 
 /* ---------- Matériel (salle de judo, tatami) ---------- */
@@ -28,12 +31,12 @@ const DISQUES = [10, 5, 2, 1, 0.5];   // disques disponibles (paires, alésage 2
    test : atelier du test 10 RM (S2). places : binômes en même temps au maximum (vide = pas de limite).
    zone : haut / bas / tronc (développement harmonieux). video : nom de la vidéo PeerTube, à relier plus tard. */
 const ATELIERS = [
- {id:"dc", n:4, nom:"Développé couché", zone:"haut", groupe:"Pectoraux", muscles:"Grands pectoraux, triceps, deltoïdes avant", support:"b160", type:"charge", test:true, places:2, depart:12,
+ {id:"dc", n:4, nom:"Développé couché", zone:"haut", groupe:"Pectoraux", muscles:"Grands pectoraux, triceps, deltoïdes avant", support:"b160", type:"charge", menu:true, puissance:true, puissPct:[30,45], test:true, places:2, depart:12,
   crit:["Allongé, pieds au sol, fesses et omoplates collées au banc.","Mains un peu plus écartées que les épaules.","La barre descend sur la poitrine, au niveau des tétons, coudes à 45° du corps.","Pousser à la verticale sans décoller les fesses."],
   resp:"Inspirer en descendant, souffler en poussant.", secu:"Toujours un pareur debout derrière la tête, mains prêtes sous la barre. 2e poste : au sol sur un banc bas, ou développé couché haltères.",
   moins:"Développé couché haltères, ou pompes sur les genoux.", plus:"Descente en 3 s.", video:"P4_DÉVELOPPÉ-COUCHÉ HALTÈRES"},
- {id:"dch", n:0, nom:"Développé couché haltères", zone:"haut", groupe:"Pectoraux", muscles:"Grands pectoraux, triceps", support:"hreg", type:"charge", depart:6,
-  crit:["Allongé sur le banc bas ou au sol sur le tatami.","Haltères au-dessus des épaules, coudes à 45°.","Descendre jusqu'à ce que les coudes touchent le sol ou soient à hauteur du banc."],
+ {id:"dch", n:0, nom:"Développé couché haltères au sol", zone:"haut", groupe:"Pectoraux", muscles:"Grands pectoraux, triceps", support:"hreg", type:"charge", menu:true, puissance:true, puissPct:[30,45], depart:6,
+  crit:["Allongé au sol sur le tatami, genoux fléchis.","Haltères au-dessus des épaules, coudes à 45°.","Descendre jusqu'à ce que les coudes touchent le tatami, puis pousser à la verticale."],
   resp:"Inspirer en descendant, souffler en poussant.", secu:"Poser les haltères sur les cuisses avant de s'asseoir ; ne jamais les lâcher au-dessus du visage.", moins:"Haltères plus légers.", plus:"Descente en 3 s.", video:"P4_DÉVELOPPÉ-COUCHÉ HALTÈRES"},
  {id:"pompes", n:0, nom:"Pompes", zone:"haut", groupe:"Pectoraux", muscles:"Grands pectoraux, triceps, gainage", support:"pdc", type:"variante",
   niveaux:["Pompes contre le mur","Pompes sur les genoux","Pompes","Pompes pieds surélevés sur le banc"],
@@ -42,30 +45,30 @@ const ATELIERS = [
  {id:"ecarte", n:0, nom:"Écarté couché", zone:"haut", groupe:"Pectoraux", muscles:"Grands pectoraux", support:"hreg", type:"charge", depart:4,
   crit:["Allongé, haltères au-dessus de la poitrine, coudes légèrement fléchis et fixes.","Ouvrir les bras jusqu'à l'horizontale, revenir en « serrant un arbre »."],
   resp:"Inspirer en ouvrant, souffler en fermant.", secu:"Charges légères : l'épaule est très étirée en bas.", video:"P5_ÉCARTÉ COUCHÉ PECS"},
- {id:"rowh", n:12, nom:"Rowing haltère un bras", zone:"haut", groupe:"Dos", muscles:"Grand dorsal, rhomboïdes, biceps", support:"hreg", type:"charge", test:true, depart:8,
-  crit:["Une main et un genou sur le banc, dos plat, regard vers le sol.","Tirer le coude vers la hanche, haltère le long du corps.","Redescendre bras tendu sans tourner le buste."],
+ {id:"rowh", n:12, nom:"Rowing haltère un bras", zone:"haut", groupe:"Dos", muscles:"Grand dorsal, rhomboïdes, biceps", support:"hreg", type:"charge", menu:true, puissance:true, puissPct:[40,50], test:true, depart:8,
+  crit:["Une main et un genou sur le banc (ou les steps recouverts du tapis), dos plat, regard vers le sol.","Tirer le coude vers la hanche, haltère le long du corps.","Redescendre bras tendu sans tourner le buste."],
   resp:"Souffler en tirant, inspirer en descendant.", secu:"Dos plat du début à la fin de la série.", moins:"Haltère plus léger.", plus:"Pause de 1 s en haut."},
- {id:"rowb", n:14, nom:"Rowing barre buste penché", zone:"haut", groupe:"Dos", muscles:"Grand dorsal, trapèzes, rhomboïdes", support:"b160", type:"charge", depart:14,
+ {id:"rowb", n:14, nom:"Rowing barre buste penché", zone:"haut", groupe:"Dos", muscles:"Grand dorsal, trapèzes, rhomboïdes", support:"b160", type:"charge", menu:true, depart:14,
   crit:["Pieds largeur de bassin, genoux fléchis, buste penché à 45°, dos plat.","Tirer la barre vers le nombril, coudes près du corps.","Le buste ne se relève pas pendant la série."],
   resp:"Souffler en tirant.", secu:"Dos rond = arrêt de la série. Charges modérées.", moins:"Rowing haltère un bras.", plus:"Pause de 1 s barre au ventre."},
- {id:"tirage", n:3, nom:"Tirage menton", zone:"haut", groupe:"Épaules", muscles:"Deltoïdes, trapèzes", support:"b120", type:"charge", depart:10,
+ {id:"tirage", n:3, nom:"Tirage menton", zone:"haut", groupe:"Épaules", muscles:"Deltoïdes, trapèzes", support:"b120", type:"charge", menu:true, depart:10,
   crit:["Debout, mains écartées largeur d'épaules (pas serrées).","Monter la barre le long du corps, coudes devant.","Coudes à hauteur des épaules au maximum, jamais au-dessus."],
   resp:"Souffler en montant.", secu:"Mains écartées et coudes jamais au-dessus des épaules : sinon l'épaule s'irrite.", moins:"Barre seule.", plus:"Descente en 3 s."},
- {id:"dm", n:0, nom:"Développé militaire haltères assis", zone:"haut", groupe:"Épaules", muscles:"Deltoïdes, triceps", support:"hreg", type:"charge", test:true, depart:6,
+ {id:"dm", n:0, nom:"Développé militaire haltères assis", zone:"haut", groupe:"Épaules", muscles:"Deltoïdes, triceps", support:"hreg", type:"charge", menu:true, puissance:true, puissPct:[30,40], test:true, depart:6,
   crit:["Assis sur le banc, dos droit, abdominaux serrés.","Haltères à hauteur des oreilles, paumes vers l'avant.","Pousser à la verticale sans cambrer."],
   resp:"Souffler en poussant.", secu:"Le dos reste collé au dossier ou droit : pas de cambrure.", moins:"Haltères plus légers.", plus:"Descente en 3 s.", video:"DL4_developpe_militaire_haltere"},
  {id:"elev", n:7, nom:"Élévations latérales", zone:"haut", groupe:"Épaules", muscles:"Deltoïdes moyens", support:"hfix", type:"charge", depart:3,
   crit:["Debout, haltères le long du corps, coudes légèrement fléchis.","Monter les bras sur le côté jusqu'à l'horizontale, pas plus haut."],
   resp:"Souffler en montant.", secu:"Charges légères ; pas d'élan avec le dos."},
- {id:"curlb", n:1, nom:"Curl barre", zone:"haut", groupe:"Bras", muscles:"Biceps", support:"curl", type:"charge", test:true, places:6, depart:10,
+ {id:"curlb", n:1, nom:"Curl barre", zone:"haut", groupe:"Bras", muscles:"Biceps", support:"curl", type:"charge", menu:true, test:true, places:6, depart:10,
   crit:["Dos contre le mur, coudes collés au corps.","Fléchir les bras sans avancer les coudes.","Redescendre jusqu'aux bras presque tendus, sans à-coup."],
   resp:"Souffler en montant.", secu:"Le dos ne quitte pas le mur : pas de balancier."},
  {id:"curlh", n:16, nom:"Curl haltères", zone:"haut", groupe:"Bras", muscles:"Biceps", support:"hreg", type:"charge", depart:5,
   crit:["Debout, coudes collés au corps.","Monter en tournant la paume vers le plafond.","Alterner ou monter les deux bras ensemble."],
   resp:"Souffler en montant.", secu:"Pas de balancier du buste."},
- {id:"extri", n:10, nom:"Extension triceps barre", zone:"haut", groupe:"Bras", muscles:"Triceps", support:"tri", type:"charge", test:true, places:2, depart:10,
-  crit:["Allongé sur le banc (ou debout), barre au-dessus du front, bras verticaux.","Fléchir seulement les coudes : la barre descend vers le front.","Tendre les bras sans écarter les coudes."],
-  resp:"Souffler en tendant.", secu:"Un pareur près de la tête en position allongée."},
+ {id:"extri", n:10, nom:"Extension triceps barre", zone:"haut", groupe:"Bras", muscles:"Triceps", support:"tri", type:"charge", menu:true, test:true, places:2, depart:10,
+  crit:["Allongé au sol sur le tatami, genoux fléchis, barre au-dessus du front, bras verticaux.","Fléchir seulement les coudes : la barre descend vers le front, les coudes s'arrêtent quand ils touchent le tatami.","Tendre les bras sans écarter les coudes."],
+  resp:"Souffler en tendant.", secu:"Au sol, le tatami arrête la descente. Un pareur près de la tête."},
  {id:"dips", n:15, nom:"Dips", zone:"haut", groupe:"Bras", muscles:"Triceps, pectoraux", support:"pdc", type:"variante",
   niveaux:["Dips au banc, pieds au sol genoux fléchis","Dips au banc, jambes tendues","Dips au banc, pieds surélevés","Dips aux barres parallèles"],
   crit:["Mains au bord du banc, doigts vers l'avant.","Descendre jusqu'à coudes à 90°, pas plus bas.","Remonter bras tendus, épaules basses."],
@@ -74,7 +77,7 @@ const ATELIERS = [
   niveaux:["Squat au poids du corps","Squat barre 10 kg (protection sur la nuque)","Goblet squat haltère 15 kg","Squat bulgare (pied arrière sur le banc)"],
   crit:["Pieds largeur d'épaules, pointes légèrement ouvertes.","Descendre jusqu'aux cuisses parallèles au sol, pas plus bas.","Genoux dans l'axe des pieds, dos plat, talons au sol."],
   resp:"Inspirer en descendant, souffler en remontant.", secu:"Hors test 10 RM : sans cage à squat, on ne monte pas de barre lourde sur les épaules. Talons qui décollent : cale sous les talons."},
- {id:"fentes", n:8, nom:"Fentes avant haltères", zone:"bas", groupe:"Cuisses et fessiers", muscles:"Quadriceps, fessiers", support:"hreg", type:"charge", test:true, depart:6,
+ {id:"fentes", n:8, nom:"Fentes avant haltères", zone:"bas", groupe:"Cuisses et fessiers", muscles:"Quadriceps, fessiers", support:"hreg", type:"charge", menu:true, test:true, depart:6,
   crit:["Debout, un haltère dans chaque main.","Grand pas en avant, descendre jusqu'à genou arrière près du sol.","Genou avant au-dessus de la cheville, buste droit."],
   resp:"Inspirer en descendant, souffler en remontant.", secu:"Le genou avant ne dépasse pas la pointe du pied."},
  {id:"montee", n:13, nom:"Montée sur banc", zone:"bas", groupe:"Cuisses et fessiers", muscles:"Quadriceps, fessiers", support:"hreg", type:"charge", depart:4,
@@ -97,24 +100,44 @@ const ATELIERS = [
  {id:"gainlat", n:0, nom:"Gainage latéral", zone:"tronc", groupe:"Abdominaux", muscles:"Obliques, moyen fessier", support:"pdc", type:"variante", temps:true,
   niveaux:["Sur le genou","Sur le pied","Jambe du dessus levée"],
   crit:["Coude sous l'épaule, corps aligné de profil.","Bassin haut, il ne s'affaisse pas."], resp:"Respirer calmement.", secu:"Changer de côté à chaque série."},
- /* Puissance : sauts et lancers sur le tatami */
- {id:"sjump", n:0, nom:"Squat jump", zone:"bas", groupe:"Cuisses et fessiers", muscles:"Quadriceps, fessiers, mollets", support:"pdc", type:"variante", puissance:true,
+ /* v2.0 : nouveaux ateliers du menu (dessins : schémas provisoires en SVG) */
+ {id:"pullover", n:0, nom:"Pull-over haltère au sol", zone:"haut", groupe:"Dos", muscles:"Grand dorsal, grand pectoral, triceps", support:"hreg", type:"charge", menu:true, depart:6,
+  crit:["Allongé sur le tatami, genoux fléchis, un haltère tenu à deux mains au-dessus de la poitrine.","Coudes légèrement fléchis et fixes : descendre l'haltère derrière la tête jusqu'à ce qu'il frôle le sol.","Ramener l'haltère au-dessus de la poitrine en tirant avec les bras."],
+  resp:"Inspirer en descendant, souffler en remontant.", secu:"Au sol : le tatami limite l'amplitude et protège l'épaule. Disques bien serrés.", moins:"Haltère plus léger.", plus:"Descente en 3 s."},
+ {id:"oiseau", n:0, nom:"Oiseau haltères", zone:"haut", groupe:"Épaules", muscles:"Deltoïdes postérieurs, rhomboïdes, trapèzes", support:"hreg", type:"charge", menu:true, depart:3,
+  crit:["Buste penché en avant, dos plat, genoux fléchis, haltères sous les épaules.","Ouvrir les bras sur le côté, coudes légèrement fléchis, jusqu'à l'horizontale.","Redescendre en contrôlant."],
+  resp:"Souffler en ouvrant.", secu:"Charges très légères ; dos plat (ou assis, buste posé sur les cuisses).", moins:"Assis, buste sur les cuisses.", plus:"Pause de 1 s en haut."},
+ {id:"squath", n:0, nom:"Squat haltères (goblet)", zone:"bas", groupe:"Cuisses et fessiers", muscles:"Quadriceps, fessiers", support:"hreg", type:"charge", menu:true, puissance:true, puissPct:[40,60], depart:8,
+  crit:["Pieds largeur d'épaules, un haltère tenu vertical contre la poitrine (ou deux haltères le long du corps).","Descendre jusqu'aux cuisses parallèles au sol, dos droit, talons au sol.","Genoux dans l'axe des pieds ; en Puissance, remonter vite jusqu'à la pointe des pieds sans quitter le sol."],
+  resp:"Inspirer en descendant, souffler en remontant.", secu:"Pas de barre sur les épaules : il n'y a pas de cage à squat. Talons qui décollent : cale sous les talons.", moins:"Haltère plus léger.", plus:"Pause de 2 s en bas."},
+ {id:"sdtj", n:0, nom:"Soulevé de terre jambes semi-tendues", zone:"bas", groupe:"Ischio-jambiers", muscles:"Ischio-jambiers, fessiers, lombaires", support:"hreg", type:"charge", menu:true, depart:6,
+  crit:["Debout, un haltère dans chaque main devant les cuisses, genoux légèrement fléchis et fixes.","Pencher le buste en poussant les fesses vers l'arrière, dos plat, haltères le long des jambes.","Descendre jusqu'à mi-tibias, ou dès que le dos veut s'arrondir, puis remonter en serrant les fesses."],
+  resp:"Inspirer en descendant, souffler en remontant.", secu:"Dos plat obligatoire : dos rond = arrêt de la série. Démonstration en S1, charges modérées.", moins:"Haltères plus légers, descente jusqu'aux genoux.", plus:"Descente en 3 s."},
+ {id:"hip", n:0, nom:"Hip thrust haltère", zone:"bas", groupe:"Fessiers", muscles:"Grands fessiers, ischio-jambiers", support:"hreg", type:"charge", menu:true, puissance:true, puissPct:[40,60], depart:8,
+  crit:["Le haut du dos appuyé sur le banc (ou les steps recouverts du tapis), pieds à plat, genoux à 90° en haut.","Un haltère posé en travers du bassin sur une serviette, tenu à deux mains.","Monter le bassin jusqu'à l'alignement épaules-hanches-genoux, serrer les fesses 1 s, redescendre."],
+  resp:"Souffler en montant.", secu:"Banc ou steps calés contre un mur ; pas de cambrure en haut (regard vers les genoux).", moins:"Haltère plus léger.", plus:"Pause de 2 s en haut."},
+ /* Anciens ateliers de puissance au poids du corps : échauffement seulement depuis la v2.0 */
+ {id:"sjump", n:0, nom:"Squat jump", zone:"bas", groupe:"Cuisses et fessiers", muscles:"Quadriceps, fessiers, mollets", support:"pdc", type:"variante", sautLancer:true,
   niveaux:["Saut extension depuis demi-squat, réception 2 s","Squat jump enchaîné","Squat jump avec haltères de 2 kg"],
   crit:["Descendre en demi-squat, mains aux hanches ou bras en arrière.","Sauter le plus haut possible, se réceptionner pieds à plat, genoux souples, dans l'axe."],
   resp:"Souffler à l'impulsion.", secu:"Réception silencieuse, genoux jamais vers l'intérieur. Sur le tatami uniquement."},
- {id:"fsaut", n:0, nom:"Fentes sautées", zone:"bas", groupe:"Cuisses et fessiers", muscles:"Quadriceps, fessiers", support:"pdc", type:"variante", puissance:true,
+ {id:"fsaut", n:0, nom:"Fentes sautées", zone:"bas", groupe:"Cuisses et fessiers", muscles:"Quadriceps, fessiers", support:"pdc", type:"variante", sautLancer:true,
   niveaux:["Fentes alternées sans saut, rapides","Fentes sautées avec pause","Fentes sautées enchaînées"],
   crit:["Partir en fente, changer de jambe en l'air.","Réception amortie, genou avant au-dessus de la cheville."], resp:"Souffler à l'impulsion.", secu:"Arrêt dès que la réception devient lourde."},
- {id:"lancer", n:0, nom:"Lancer poitrine medecine ball", zone:"haut", groupe:"Pectoraux", muscles:"Pectoraux, triceps", support:"mb", type:"variante", puissance:true,
+ {id:"lancer", n:0, nom:"Lancer poitrine medecine ball", zone:"haut", groupe:"Pectoraux", muscles:"Pectoraux, triceps", support:"mb", type:"variante", sautLancer:true,
   niveaux:["Lancer à 2 m du partenaire, debout","Lancer à 4 m","Pompes explosives sur les genoux"],
   crit:["Ballon contre la poitrine, coudes ouverts.","Pousser le plus vite possible vers le partenaire, bras tendus à la fin."], resp:"Souffler en lançant.", secu:"Le partenaire est prêt avant chaque lancer."}
 ];
 const atelier = id => ATELIERS.find(a => a.id === id);
 /* Illustrations des ateliers (fiche « Musculation : suivi du travail des élèves », dessins © Espace-musculation.com) */
 const IMAGES_AT = ["curlb", "mollets", "montee", "crunch", "squat", "extri", "rowb", "tirage", "elev", "twist", "dc", "fentes", "rowh", "curlh", "gainage", "pompes", "gainlat", "dips", "dch", "ecarte", "dm"];
-const imgAtelier = id => IMAGES_AT.includes(id) ? 'img/ateliers/' + id + '.jpg' : null;
-const CIRCUIT_S1 = ["curlb","crunch","tirage","dc","squat","fentes","extri","twist","rowh","rowb","dips","curlh"];
-const ATELIERS_TEST = ["dc","rowh","curlb","extri","dm","fentes"];
+const IMAGES_SVG = ["pullover", "oiseau", "squath", "sdtj", "hip"];   // schémas provisoires (pas de dessin dans la fiche)
+const imgAtelier = id => IMAGES_AT.includes(id) ? 'img/ateliers/' + id + '.jpg' : IMAGES_SVG.includes(id) ? 'img/ateliers/' + id + '.svg' : null;
+/* v2.0 : le menu = 14 ateliers avec charges. Circuit de S1 sur les 14 (4 min par atelier), en alternant haut et bas du corps. */
+const MENU = ATELIERS.filter(a => a.menu).map(a => a.id);
+const CIRCUIT_S1 = ["dc","squath","rowh","fentes","dm","sdtj","curlb","hip","extri","rowb","tirage","dch","pullover","oiseau"];
+const ATELIERS_TEST = MENU.slice();   // S2-S3 : chaque élève en teste 4 à 5 par séance (objectif 8 à 10)
+const OBJ_TESTS = [8, 10];
 
 /* ---------- Mobiles ---------- */
 const MOBILES = {
@@ -135,7 +158,7 @@ const MOBILES = {
    exec:"Montée la plus rapide possible, descente contrôlée ; arrêt dès que la vitesse baisse", ressenti:[5,6], sensation:"tension",
    attendu:"Tension générale, sensation de « compacité », sans brûlure.",
    ordre:["charge","series"], ordreTxt:"Charge (tant que la vitesse reste), puis séries", nbEx:[4,5],
-   forme:"Bas du corps : poids du corps et sauts sur le tatami. Haut du corps : charges légères poussées vite."}
+   forme:"6 ateliers seulement : développé couché (barre ou haltères au sol), développé militaire, rowing haltère, squat haltères, hip thrust. Le partenaire dit STOP dès que la vitesse baisse."}
 };
 const MOBILES_ORDRE = ["tonif","volume","puiss"];
 
@@ -180,7 +203,7 @@ const SECU = {
 };
 
 /* ---------- Échauffements ---------- */
-const ECH_BASE = "P1 · Course à allure modérée (zone blanche) jusqu'à la sensation de chaleur et un léger essoufflement. Prendre son pouls : au-dessus de 140, repartir 2 min à cette allure (zone bleue). Mobiliser chevilles, genoux, hanches, épaules, poignets. P2 · Réveil musculaire au poids du corps : 10 squats, 10 pompes adaptées, 20 s de gainage. P3 · Spécifique : chaque exercice du jour, sans charge ou très léger, 1 série de 10 en soignant le placement.";
+const ECH_BASE = "P1 · Course à allure modérée (zone blanche) jusqu'à la sensation de chaleur et un léger essoufflement. Prendre son pouls : au-dessus de 140, repartir 2 min à cette allure (zone bleue). Mobiliser chevilles, genoux, hanches, épaules, poignets. P2 · Réveil musculaire au poids du corps (ateliers du circuit d'échauffement) : 10 squats, 10 pompes adaptées, 10 dips au banc, 10 crunchs, 20 s de gainage ventral et 15 s de gainage latéral par côté. P3 · Spécifique : chaque exercice du jour, sans charge ou très léger, 1 série de 10 en soignant le placement.";
 
 /* ---------- Séances ----------
    tl : [libellé, durée en min, type] ; types : "inst" (accueil, installation : bloc d'information) ; tous les autres
@@ -188,11 +211,11 @@ const ECH_BASE = "P1 · Course à allure modérée (zone blanche) jusqu'à la se
 const fiche = (titre, cat, duree, dispo, roles, deroul, crit, reussite, moins, plus, schema) => ({titre, cat, duree, dispo, roles, deroul, crit, reussite, moins, plus, schema});
 
 const SEANCES = [
- {id:"S1", titre:"Se situer, découvrir les ateliers", obj:"Connaître les règles de sécurité et les rôles du binôme ; découvrir 12 ateliers ; commencer à mettre des mots sur ses ressentis.",
-  install:"Binômes formés pour tout le cycle. Les 12 ateliers du circuit sont installés en boucle sur le tatami, numérotés. Les élèves ouvrent l'appli élève et créent leur binôme.",
+ {id:"S1", titre:"Se situer, découvrir les ateliers", obj:"Connaître les règles de sécurité et les rôles du binôme ; découvrir les 14 ateliers du cycle (tous avec charges) ; commencer à mettre des mots sur ses ressentis.",
+  install:"Binômes formés pour tout le cycle. Les 14 ateliers du circuit sont installés en boucle sur le tatami, numérotés (2 bancs, steps empilés recouverts d'un tapis pour le rowing haltère et le hip thrust). Les élèves ouvrent l'appli élève et créent leur binôme.",
   bilan:"Quel mot as-tu choisi en fin d'échauffement ? Quel atelier t'a le plus fait travailler ?",
   prepare:["Le questionnaire « Je me situe » qui suggère un mobile.","Les premiers mots du nuage de la classe.","Le test 10 RM de la séance 2."],
-  tl:[["Accueil, binômes, appli",10,"inst"],["Échauffement + premiers mots",8,"ech"],["Règles et rôles du binôme",3,"ex"],["Circuit : ateliers 1 à 6",30,"ex"],["Circuit : ateliers 7 à 12",30,"ex"],["Je me situe, envoi, rangement",5,"bil"]],
+  tl:[["Accueil, binômes, appli",10,"inst"],["Échauffement + premiers mots",8,"ech"],["Règles et rôles du binôme",3,"ex"],["Circuit : ateliers 1 à 7",28,"ex"],["Circuit : ateliers 8 à 14",28,"ex"],["Je me situe, envoi, rangement",5,"bil"]],
   fiches:[
    fiche("Échauffement et premiers mots","Échauffement",8,"Toute la classe sur le tatami. Échauffement en 3 parties, avec 2 arrêts pour noter son ressenti dans l'appli (1 min chacun).","Chacun pour soi ; le partenaire tient le téléphone.",
     ["2-3 min de course légère : ARRÊT. Dans l'appli, note sur 10 et un mot pour ce que tu ressens (muscles, respiration).","Fin de la course et des mobilisations (5-6 min) : ARRÊT. Même chose : une note et un mot.","Le professeur affiche le nuage de mots (2 min) : « Qu'est-ce qui a changé entre les deux moments ? »","Réveil musculaire : 10 squats, 10 pompes adaptées, 20 s de gainage."],
@@ -200,42 +223,64 @@ const SEANCES = [
    fiche("Règles et rôles du binôme","Sécurité",3,"Regroupement devant le professeur. Démonstration au développé couché : placement, pareur, respiration.","Un pratiquant, un partenaire. Le partenaire compte, observe, pare et conseille ; on change à chaque série.",
     ["Les 6 règles de sécurité (outil Sécurité).","Montrer le pareur au développé couché.","Montrer « souffler sur l'effort ».","Montrer comment charger une barre : disques des deux côtés, serrés."],
     "Jamais d'effort à 100 %, jamais moins de 3 répétitions.","Chacun sait dire qui pare au développé couché.",null,null,"regles"),
-   fiche("Circuit : ateliers 1 à 6","Circuit",30,"Un binôme par atelier au départ (2 au développé couché : banc + au sol). 5 min par atelier, puis on tourne au signal dans l'ordre des numéros.","Chacun fait 2 × 10 répétitions à charge légère pendant que l'autre observe, puis on change. Le partenaire coche « fait » dans l'appli.",
+   fiche("Circuit : ateliers 1 à 7","Circuit",28,"Un binôme par atelier au départ. 4 min par atelier, puis on tourne au signal dans l'ordre des numéros.","Chacun fait 2 × 10 répétitions à charge légère pendant que l'autre observe, puis on change. Le partenaire coche « fait » dans l'appli.",
     ["Lire la fiche de l'atelier dans l'appli (placement, respiration, sécurité).","Charge légère : on apprend le geste, on ne cherche pas à forcer.","2 × 10 répétitions chacun, en alternance.","Au signal : ranger les disques de l'atelier et passer au suivant."],
-    "Précision du geste avant la charge.","Les 6 ateliers faits avec une technique correcte.","Barre seule, haltères plus légers.","Descente lente (3 s).","circuit:1"),
-   fiche("Circuit : ateliers 7 à 12","Circuit",30,"Même fonctionnement : 5 min par atelier, on tourne au signal.","Le partenaire observe : amplitude, dos, respiration. Il le dit tout de suite.",
-    ["Suite du circuit dans l'ordre des numéros.","Chacun 2 × 10 répétitions, charge légère.","Un conseil du partenaire à chaque atelier.","Si retard : arrêter à 10 ateliers, les 2 derniers se découvrent en S2."],
-    "Précision du geste avant la charge.","Les 12 ateliers découverts.","Barre seule.","Descente lente (3 s).","circuit:2"),
+    "Précision du geste avant la charge.","Les 7 ateliers faits avec une technique correcte.","Barre seule, haltères plus légers.","Descente lente (3 s).","circuit:1"),
+   fiche("Circuit : ateliers 8 à 14","Circuit",28,"Même fonctionnement : 4 min par atelier, on tourne au signal.","Le partenaire observe : amplitude, dos, respiration. Il le dit tout de suite.",
+    ["Suite du circuit dans l'ordre des numéros.","Chacun 2 × 10 répétitions, charge légère.","Un conseil du partenaire à chaque atelier.","Soulevé de terre jambes semi-tendues : le professeur vérifie le dos plat de chacun."],
+    "Précision du geste avant la charge.","Les 14 ateliers découverts.","Barre seule.","Descente lente (3 s).","circuit:2"),
    fiche("Je me situe, envoi, rangement","Fin de séance",5,"Disques rangés sur les portants, barres et haltères rangés. Chaque élève remplit « Je me situe » dans l'appli.","Un élève du binôme envoie le carnet (QR ou fichier).",
     ["3 min : questionnaire « Je me situe » ; l'appli suggère un mobile.","2 min : rangement complet.","1 min : envoi du carnet, puis bilan : quel mot as-tu choisi en fin d'échauffement ?"],
     "Rangement complet avant de partir.","Questionnaire rempli, carnet envoyé.",null,null,null)
   ]},
- {id:"S2", titre:"Test 10 RM, défi par équipes", obj:"Trouver sa charge maximale sur 6 ateliers par une montée progressive ; tenir les rôles de juge et de coach ; construire l'échelle de ressentis de la classe.",
-  install:"Les 6 ateliers du test sont installés 2 fois (sauf le développé couché : banc + atelier au sol). Les binômes sont répartis en 4 équipes (couleurs). Rappel : jamais d'effort à 100 %.",
+ {id:"S2", titre:"Test 10 RM (1), défi par équipes", obj:"Trouver sa charge maximale sur 4 à 5 ateliers par une montée progressive ; tenir les rôles de juge et de coach ; construire l'échelle de ressentis de la classe.",
+  install:"Les 14 ateliers sont installés. Chaque élève choisit 4 à 5 ateliers à tester aujourd'hui, en couvrant des groupes musculaires différents (au moins un du bas du corps sur les deux séances). Rappel : jamais d'effort à 100 %.",
   bilan:"Entre ta première série et ta dernière, qu'est-ce qui a changé dans tes muscles ? Quel mot l'a dit ?",
-  prepare:["La charge max de chaque élève sur 6 ateliers (calculée par l'appli).","L'échelle de ressentis commune à la classe.","Les charges conseillées pour les 3 mobiles."],
-  tl:[["Accueil, équipes, installation",8,"inst"],["Échauffement + mots",12,"ech"],["Règles du test et No REP",5,"ex"],["Test : ateliers 1 à 3",22,"ex"],["Test : ateliers 4 à 6",22,"ex"],["Nuage, échelle commune, défi, rangement",9,"bil"]],
+  prepare:["4 à 5 charges max par élève (calculées par l'appli).","L'échelle de ressentis commune à la classe.","La 2e séance de test."],
+  tl:[["Accueil, équipes, installation",8,"inst"],["Échauffement + mots",12,"ech"],["Règles du test et No REP",5,"ex"],["Tests : 1er bloc",22,"ex"],["Tests : 2e bloc",22,"ex"],["Nuage, échelle commune, défi, rangement",9,"bil"]],
   fiches:[
    fiche("Échauffement + mots","Échauffement",12,ECH_BASE,"Chacun pour soi.",
-    ["Échauffement en 3 parties, prise de pouls à la fin de P1.","P3 : 1 série de 10 à vide sur les 6 ateliers du test."],
+    ["Échauffement en 3 parties, prise de pouls à la fin de P1.","P3 : 1 série de 10 à vide sur chaque atelier que tu vas tester."],
     "Le pouls est pris honnêtement.","Pouls noté dans l'appli.",null,null,null),
    fiche("Règles du test et No REP","Consignes",5,"Démonstration par le professeur avec un binôme.","Le juge compte « + 1 » ou « No REP » sur le téléphone ; le coach pare et conseille.",
-    ["Commencer léger (l'appli propose la charge de départ).","10 répétitions valides : on monte (+ 2 kg haltère, + 4 kg barre), 2 min de récupération.","Une série qui s'arrête avant 10 : fin du test sur cet atelier. 5 séries d'essai au maximum.","No REP : amplitude incomplète, trajet déformé, charge non freinée. Deux No REP de suite : la série s'arrête.","Noter son ressenti à la première et à la dernière série."],
+    ["Choisir ses ateliers dans l'appli (onglet Séance) : 4 à 5 aujourd'hui.","Commencer léger (l'appli propose la charge de départ).","10 répétitions valides : on monte (+ 2 kg haltère, + 4 kg barre), 2 min de récupération.","Une série qui s'arrête avant 10 : fin du test sur cet atelier. 5 séries d'essai au maximum."],
     "Pas de No REP : la précision avant la charge.","Chacun sait ce qu'est un No REP.",null,null,"test"),
-   fiche("Test : ateliers 1 à 3","Test 10 RM",22,"Développé couché, rowing haltère, curl barre. Environ 7 min par atelier pour le binôme.","Pendant que l'un soulève, l'autre juge sur le téléphone ; on alterne à chaque série.",
-    ["L'appli affiche le support et la charge de départ.","Le juge touche « + 1 » à chaque répétition valide, « No REP » sinon.","10 valides : l'appli propose la charge suivante et lance 2 min de récupération (le partenaire passe).","Fin du test : le juge touche « Je valide ». La charge max s'affiche.","Ressenti : note et mot à la 1re et à la dernière série."],
-    "Montée progressive, jamais d'effort à 100 %.","3 charges max validées par élève.","Partir plus léger.",null,"ateliers:dc,rowh,curlb"),
-   fiche("Test : ateliers 4 à 6","Test 10 RM",22,"Extension triceps barre, développé militaire haltères, fentes avant haltères.","Même fonctionnement ; le coach pare à l'extension triceps.",
-    ["Même méthode.","Un atelier non terminé faute de temps : saisie directe possible à la séance 3."],
-    "Montée progressive.","6 charges max validées par élève.","Partir plus léger.",null,"ateliers:extri,dm,fentes"),
+   fiche("Tests : 1er bloc","Test 10 RM",22,"2 à 3 ateliers par élève. Pendant que l'un soulève, l'autre juge sur le téléphone ; on alterne à chaque série. Environ 7 min par atelier pour le binôme.","Le juge compte, le coach pare (développé couché, extension triceps).",
+    ["Montée progressive, 2 min de récupération entre les séries (le partenaire fait la sienne).","Ressenti à la première et à la dernière série.","Le partenaire valide la charge max dans l'appli."],
+    "Montée progressive.","2 à 3 charges max validées.","Partir plus léger.",null,"ateliers:dc,dch,rowh,rowb,pullover,dm,tirage"),
+   fiche("Tests : 2e bloc","Test 10 RM",22,"2 ateliers de plus par élève, dans d'autres groupes musculaires.","Même fonctionnement.",
+    ["Même méthode.","Viser au moins un atelier du bas du corps sur les deux séances de test."],
+    "Montée progressive.","4 à 5 charges max en fin de séance.","Partir plus léger.",null,"ateliers:oiseau,curlb,extri,squath,fentes,sdtj,hip"),
    fiche("Nuage, échelle commune, défi, rangement","Fin de séance",9,"Rangement d'abord. Chaque binôme montre son QR « mots et défi » au professeur.","Un élève du binôme montre le QR.",
     ["3 min : rangement.","2 min : nuage de mots (1re série / dernière série) ; on range les mots de léger à maximal : c'est l'échelle de la classe.","2 min : résultat du défi par équipes (kilos + points de qualité).","Envoi du carnet."],
     "Rangement complet.","Échelle commune affichée, défi proclamé.",null,null,"echelle")
   ]},
- {id:"S3", titre:"Mobile Tonification", obj:"Éprouver l'endurance de force : 15 à 20 répétitions à 50-60 %, récupération courte, en circuit ; vérifier que ses sensations correspondent au mobile.",
-  install:"6 ateliers en circuit (2 haut du corps, 2 bas du corps, 2 tronc). Les charges sont calculées par l'appli (50-60 % de la charge max).",
+ {id:"S3", titre:"Test 10 RM (2), compléter ses charges max", obj:"Trouver 4 à 5 charges max de plus, sur d'autres groupes musculaires : 8 à 10 au total en fin de séance.",
+  install:"Les 14 ateliers sont installés. Chaque élève choisit 4 à 5 ateliers à tester aujourd'hui, en couvrant des groupes musculaires différents (au moins un du bas du corps sur les deux séances). Rappel : jamais d'effort à 100 %.",
+  bilan:"Entre ta première série et ta dernière, qu'est-ce qui a changé dans tes muscles ? Quel mot l'a dit ?",
+  prepare:["8 à 10 charges max par élève : les charges des 3 mobiles sont calculées.","Le premier mobile éprouvé en S4."],
+  tl:[["Accueil, équipes, installation",8,"inst"],["Échauffement + mots",12,"ech"],["Rappel du test et choix des ateliers",3,"ex"],["Tests : 1er bloc",22,"ex"],["Tests : 2e bloc",22,"ex"],["Bilan des charges max, défi, rangement",10,"bil"]],
+  fiches:[
+   fiche("Échauffement + mots","Échauffement",12,ECH_BASE,"Chacun pour soi.",
+    ["Échauffement en 3 parties, prise de pouls à la fin de P1.","P3 : 1 série de 10 à vide sur chaque atelier que tu vas tester."],
+    "Le pouls est pris honnêtement.","Pouls noté dans l'appli.",null,null,null),
+   fiche("Rappel du test et choix des ateliers","Consignes",3,"Rappel rapide devant le tableau.","Le juge compte « + 1 » ou « No REP » sur le téléphone ; le coach pare et conseille.",
+    ["Choisir ses ateliers dans l'appli (onglet Séance) : 4 à 5 aujourd'hui.","Commencer léger (l'appli propose la charge de départ).","10 répétitions valides : on monte (+ 2 kg haltère, + 4 kg barre), 2 min de récupération.","Une série qui s'arrête avant 10 : fin du test sur cet atelier. 5 séries d'essai au maximum."],
+    "Pas de No REP : la précision avant la charge.","Chacun sait ce qu'est un No REP.",null,null,"test"),
+   fiche("Tests : 1er bloc","Test 10 RM",22,"2 à 3 ateliers par élève. Pendant que l'un soulève, l'autre juge sur le téléphone ; on alterne à chaque série. Environ 7 min par atelier pour le binôme.","Le juge compte, le coach pare (développé couché, extension triceps).",
+    ["Montée progressive, 2 min de récupération entre les séries (le partenaire fait la sienne).","Ressenti à la première et à la dernière série.","Le partenaire valide la charge max dans l'appli."],
+    "Montée progressive.","2 à 3 charges max validées.","Partir plus léger.",null,"ateliers:dc,dch,rowh,rowb,pullover,dm,tirage"),
+   fiche("Tests : 2e bloc","Test 10 RM",22,"2 ateliers de plus par élève, dans d'autres groupes musculaires.","Même fonctionnement.",
+    ["Même méthode.","À la fin de la S3, chacun a 8 à 10 charges max."],
+    "Montée progressive.","8 à 10 charges max en fin de séance.","Partir plus léger.",null,"ateliers:oiseau,curlb,extri,squath,fentes,sdtj,hip"),
+   fiche("Bilan des charges max, défi, rangement","Fin de séance",10,"Rangement d'abord. Chaque binôme montre son QR « mots et défi » au professeur.","Un élève du binôme montre le QR.",
+    ["3 min : rangement.","2 min : onglet Charges : chacun vérifie ses 8 à 10 charges max ; un atelier manquant se teste en saisie directe en S4.","2 min : résultat du défi par équipes (cumul S2 + S3).","Envoi du carnet."],
+    "Rangement complet.","Charges max vérifiées, défi proclamé.",null,null,"test")
+  ]},
+ {id:"S4", titre:"Mobile Tonification", obj:"Éprouver l'endurance de force : 15 à 20 répétitions à 50-60 %, récupération courte, en circuit ; vérifier que ses sensations correspondent au mobile.",
+  install:"6 ateliers en circuit (3 du haut du corps, 3 du bas du corps), parmi les ateliers où le binôme a une charge max. Les charges sont calculées par l'appli (50-60 % de la charge max).",
   bilan:"Ta sensation était-elle « fatigue d'une zone » ? Sinon, qu'as-tu changé ?",
-  prepare:["Le premier des 3 mobiles éprouvés.","Les ressentis comparés en S5 pour choisir son mobile."],
+  prepare:["Le premier des 3 mobiles éprouvés.","Les ressentis comparés en S6 pour choisir son mobile."],
   tl:[["Accueil, installation",8,"inst"],["Échauffement",10,"ech"],["Le mobile Tonification",4,"ex"],["Circuit, tour 1",12,"ex"],["Circuit, tour 2",12,"ex"],["Circuit, tour 3",12,"ex"],["Ressentis, envoi, rangement",8,"bil"]],
   fiches:[
    fiche("Échauffement","Échauffement",10,ECH_BASE,"Chacun pour soi.",["Échauffement en 3 parties.","P3 : les 6 ateliers du circuit, à vide."],"Pouls pris.","Prêt pour le circuit.",null,null,null),
@@ -254,11 +299,11 @@ const SEANCES = [
    fiche("Ressentis, envoi, rangement","Fin de séance",8,"Rangement puis bilan rapide.","Un élève du binôme envoie le carnet.",
     ["L'appli montre la cohérence de tes ressentis avec le mobile.","Rangement.","Envoi du carnet."],null,"Carnet envoyé.",null,null,null)
   ]},
- {id:"S4", titre:"Mobile Volume", obj:"Éprouver le volume : 8 à 12 répétitions à 65-80 %, mouvement lent, 1 min 30 à 2 min de récupération ; reconnaître la brûlure.",
-  install:"Les binômes choisissent 4 exercices : 2 du haut du corps, 1 du bas, 1 du tronc. Charges à 65-80 % calculées par l'appli.",
+ {id:"S5", titre:"Mobile Volume", obj:"Éprouver le volume : 8 à 12 répétitions à 65-80 %, mouvement lent, 1 min 30 à 2 min de récupération ; reconnaître la brûlure.",
+  install:"Les binômes choisissent 4 exercices : 2 du haut du corps, 2 du bas. Charges à 65-80 % calculées par l'appli.",
   bilan:"As-tu senti « ça brûle, ça gonfle » ? À quelle série ?",
   prepare:["Le deuxième mobile éprouvé."],
-  tl:[["Accueil, installation",8,"inst"],["Échauffement",10,"ech"],["Le mobile Volume",4,"ex"],["Bloc haut du corps",22,"ex"],["Bloc bas du corps et tronc",22,"ex"],["Ressentis, envoi, rangement",8,"bil"]],
+  tl:[["Accueil, installation",8,"inst"],["Échauffement",10,"ech"],["Le mobile Volume",4,"ex"],["Bloc haut du corps",22,"ex"],["Bloc bas du corps",22,"ex"],["Ressentis, envoi, rangement",8,"bil"]],
   fiches:[
    fiche("Échauffement","Échauffement",10,ECH_BASE,"Chacun pour soi.",["Échauffement en 3 parties.","P3 : 1 série légère de 10 sur chaque exercice choisi."],null,"Prêt.",null,null,null),
    fiche("Le mobile Volume","Consignes",4,"Regroupement : démonstration du tempo lent (2-3 s à la descente).","Le partenaire compte le tempo à voix haute.",
@@ -267,57 +312,46 @@ const SEANCES = [
    fiche("Bloc haut du corps","Volume",22,"2 exercices du haut du corps, 4 séries chacun. Pendant la récupération de l'un, l'autre fait sa série.","Le partenaire compte le tempo et coche les signes.",
     ["Séance préremplie dans l'appli : on ne note que les différences.","Ressenti après chaque exercice.","Brûlure trop tôt ou pas du tout : l'appli propose un ajustement."],
     "Tempo lent tenu jusqu'à la dernière répétition.","2 exercices faits, ressentis notés.","Moins de séries (3).","Une série de plus (5).","mobile:volume"),
-   fiche("Bloc bas du corps et tronc","Volume",22,"1 exercice du bas du corps, 1 du tronc, 4 séries chacun.","Même fonctionnement.",
-    ["Fentes ou montée sur banc, puis crunch ou gainage (variante plus difficile).","Ressenti après chaque exercice."],
+   fiche("Bloc bas du corps","Volume",22,"2 exercices du bas du corps, 4 séries chacun.","Même fonctionnement.",
+    ["Par exemple squat haltères et hip thrust, ou fentes et soulevé de terre jambes semi-tendues.","Ressenti après chaque exercice."],
     "Tempo lent tenu.","4 exercices faits, ressentis notés.",null,null,"mobile:volume"),
    fiche("Ressentis, envoi, rangement","Fin de séance",8,"Rangement puis bilan.","Un élève envoie le carnet.",["Cohérence des ressentis avec le mobile.","Rangement, envoi."],null,"Carnet envoyé.",null,null,null)
   ]},
- {id:"S5", titre:"Mobile Puissance, choisir son mobile", obj:"Éprouver la puissance : 3 à 6 répétitions à 30-60 %, le plus vite possible, récupération complète ; comparer les 3 mobiles, choisir le sien et construire son échelle personnelle.",
-  install:"Zone de sauts sur le tatami (squat jump, fentes sautées, lancer de medecine ball) et 2 ateliers à charge légère (développé couché ou rowing, développé militaire).",
+ {id:"S6", titre:"Mobile Puissance, choisir son mobile", obj:"Éprouver la puissance : 3 à 6 répétitions à 30-60 %, le plus vite possible, récupération complète ; comparer les 3 mobiles, choisir le sien et construire son échelle personnelle.",
+  install:"Les 6 ateliers de puissance : développé couché (barre ou haltères au sol), développé militaire, rowing haltère, squat haltères, hip thrust. Chaque binôme en fait 4, dont au moins un du bas du corps.",
   bilan:"Quel mobile choisis-tu, et pourquoi ? Quelle sensation te le dit ?",
-  prepare:["Le choix du mobile pour le projet (S6 à S9).","L'échelle de ressentis personnelle."],
-  tl:[["Accueil, installation",8,"inst"],["Échauffement progressif",12,"ech"],["Le mobile Puissance",3,"ex"],["Sauts et lancers sur le tatami",12,"ex"],["Charges légères, vitesse maximale",20,"ex"],["Comparer, choisir, mon échelle",10,"ex"],["Envoi, rangement",5,"bil"]],
+  prepare:["Le choix du mobile pour le projet (S7 à S9).","L'échelle de ressentis personnelle."],
+  tl:[["Accueil, installation",8,"inst"],["Échauffement progressif",12,"ech"],["Le mobile Puissance",3,"ex"],["Bas du corps : vitesse maximale",15,"ex"],["Haut du corps : vitesse maximale",17,"ex"],["Comparer, choisir, mon échelle",10,"ex"],["Envoi, rangement",5,"bil"]],
   fiches:[
-   fiche("Échauffement progressif","Échauffement",12,ECH_BASE+" P4 · Sauts progressifs : 5 sauts pieds joints sur place, 5 sauts extension, réception silencieuse.","Chacun pour soi.",["Échauffement en 4 parties, sauts progressifs à la fin."],"Réceptions silencieuses.","Prêt à sauter.",null,null,null),
+   fiche("Échauffement progressif","Échauffement",12,ECH_BASE+" P4 · Mise en route nerveuse : 2 × 5 squats sautés et 2 × 5 pompes rapides, au poids du corps, réception silencieuse.","Chacun pour soi.",["Échauffement en 4 parties, mise en route nerveuse à la fin."],"Réceptions silencieuses.","Prêt.",null,null,null),
    fiche("Le mobile Puissance","Consignes",3,"Regroupement.","Le partenaire regarde la vitesse : dès qu'elle baisse, il dit STOP.",
-    ["30-60 % de la charge max, 3 à 6 répétitions, 2 à 3 min de récupération complète.","Montée la plus rapide possible, descente contrôlée.","Arrêt dès que la vitesse baisse.","Sensation attendue : tension générale, sans brûlure."],
+    ["Charge selon l'atelier : 30-45 % aux développés couchés, 30-40 % au militaire, 40-50 % au rowing haltère, 40-60 % au squat haltères et au hip thrust.","3 à 6 répétitions, 4 séries, 2 à 3 min de récupération complète.","Montée la plus rapide possible, descente contrôlée en 1 à 2 s, pas de rebond.","Arrêt dès que la vitesse baisse : le partenaire touche « la vitesse a baissé ».","Sensation attendue : tension générale, sans brûlure."],
     null,"Chacun sait quand s'arrêter.",null,null,"mobile:puiss"),
-   fiche("Sauts et lancers sur le tatami","Puissance",12,"3 ateliers : squat jump, fentes sautées, lancer poitrine au partenaire. 4 séries de 5, récupération complète.","Le partenaire compte et dit STOP si la réception devient lourde.",
-    ["Choisir le niveau de chaque atelier dans l'appli.","5 répétitions le plus explosives possible.","Récupération complète (le partenaire travaille)."],
-    "Réception silencieuse, genoux dans l'axe.","3 ateliers, ressentis notés.","Niveau plus facile.","Niveau plus difficile.","mobile:puiss"),
-   fiche("Charges légères, vitesse maximale","Puissance",20,"2 exercices à 30-60 % : développé couché (ou rowing haltère) et développé militaire. 4 séries de 4 à 6.","Le partenaire juge la vitesse.",
-    ["Pousser le plus vite possible, redescendre en contrôlant.","Vitesse qui baisse : la série s'arrête.","Ressenti après chaque exercice : tension générale ?"],
-    "Vitesse maximale à chaque répétition.","2 exercices, ressentis notés.","Charge à 30 %.","Charge à 60 %.","mobile:puiss"),
+   fiche("Bas du corps : vitesse maximale","Puissance",15,"Squat haltères (remontée explosive jusqu'à la pointe des pieds, sans quitter le sol) ou hip thrust (poussée explosive des hanches, 1 s en haut). 4 séries de 4 à 6.","Le partenaire juge la vitesse et dit STOP dès qu'elle baisse.",
+    ["Charge à 40-60 % (l'appli la calcule).","Le plus vite possible à la montée, descente contrôlée.","Vitesse qui baisse : la série s'arrête, même avant 4 répétitions."],
+    "Vitesse maximale à chaque répétition.","1 à 2 exercices, ressentis notés.","Charge à 40 %.","Charge à 60 %.","mobile:puiss"),
+   fiche("Haut du corps : vitesse maximale","Puissance",17,"Développé couché (barre avec pareur, ou haltères au sol), développé militaire assis, rowing haltère. 4 séries de 4 à 6.","Le partenaire juge la vitesse ; il pare au développé couché barre.",
+    ["Pousser ou tirer le plus vite possible, redescendre en contrôlant.","Vitesse qui baisse : la série s'arrête.","Ressenti après chaque exercice : tension générale ?"],
+    "Vitesse maximale à chaque répétition.","2 à 3 exercices, ressentis notés.","Charge au bas de la fourchette.","Charge au haut de la fourchette.","mobile:puiss"),
    fiche("Comparer, choisir, mon échelle","Choix",10,"Chacun avec son téléphone, assis sur le tatami.","Le partenaire aide à relire les ressentis.",
-    ["L'appli montre tes ressentis en Tonification, Volume et Puissance côte à côte.","Choisis ton mobile pour le projet (S6 à S9).","Construis ton échelle : pour chaque niveau, ton mot à toi."],
+    ["L'appli montre tes ressentis en Tonification, Volume et Puissance côte à côte.","Choisis ton mobile pour le projet (S7 à S9).","Construis ton échelle : pour chaque niveau, ton mot à toi."],
     "Choix justifié par une sensation.","Mobile choisi, échelle faite.",null,null,"echelle"),
    fiche("Envoi, rangement","Fin de séance",5,"Rangement puis envoi.","Un élève envoie le carnet.",["Rangement.","Envoi du carnet.","Bilan : quel mobile, pourquoi ?"],null,"Carnet envoyé.",null,null,null)
   ]},
- {id:"S6", titre:"Mon projet (évaluation AFL2 et AFL3, 1)", obj:"Construire un projet cohérent avec son mobile (3 groupes musculaires, 4 à 6 exercices) et le réaliser ; choisir sa répartition AFL2/AFL3 et son rôle.",
-  install:"Tous les ateliers sont accessibles. Banc de développé couché : 2 binômes au maximum (banc + au sol), barre triceps : 2.",
+ {id:"S7", titre:"Mon projet (évaluation AFL2 et AFL3)", obj:"Construire un projet cohérent avec son mobile (haut et bas du corps, 4 à 6 exercices) et le réaliser ; choisir sa répartition AFL2/AFL3 et son rôle ; ajuster pour l'évaluation.",
+  install:"Les 14 ateliers sont accessibles. Banc de développé couché : 1 binôme ; barres triceps : 2 ; steps recouverts du tapis pour le rowing haltère et le hip thrust.",
   bilan:"Ton projet tient-il dans la séance ? Qu'as-tu ajusté ?",
-  prepare:["Le projet réalisé en S7, S8 et S9.","L'évaluation AFL2 et AFL3 (1re fois)."],
+  prepare:["Le projet réalisé en S8 et S9.","L'évaluation AFL2 et AFL3."],
   tl:[["Accueil, installation",8,"inst"],["Échauffement personnalisé",10,"ech"],["Construire mon projet",12,"ex"],["Réaliser mon projet",38,"ex"],["Ajustements, envoi, rangement",8,"bil"]],
   fiches:[
    fiche("Échauffement personnalisé","Échauffement",10,"Chaque élève s'échauffe pour SON projet : P1 course et pouls, P2 réveil musculaire, P3 les exercices de son projet à vide.","Le partenaire vérifie.",["Échauffement adapté à ses exercices."],"Échauffement en lien avec le projet.","Fait.",null,null,null),
    fiche("Construire mon projet","Projet",12,"Dans l'appli, onglet Projet.","Le partenaire relit le projet.",
-    ["Mobile choisi en S5 (on peut encore changer).","3 groupes musculaires (haut, bas, tronc), 4 à 6 exercices (Tonification : 6).","L'appli vérifie l'équilibre, la durée (60 min au plus) et les places (banc : 2).","Choisir sa répartition AFL2/AFL3 et son rôle évalué (juge ou coach)."],
+    ["Mobile choisi en S6 (on peut encore changer).","Haut et bas du corps, 4 à 6 exercices (Tonification : 6 ; Puissance : parmi les 6 ateliers de puissance).","L'appli vérifie l'équilibre, la durée (60 min au plus) et les places (banc de développé couché : 1).","Choisir sa répartition AFL2/AFL3 et son rôle évalué (juge ou coach)."],
     "Projet équilibré qui tient dans la séance.","Projet validé dans l'appli.",null,null,"mobile:projet"),
    fiche("Réaliser mon projet","Projet",38,"Le binôme enchaîne les exercices de ses deux projets. Le professeur observe et évalue AFL2 et AFL3.","Le partenaire juge ou coache selon son rôle évalué ; il note les signes et un conseil.",
     ["Séance préremplie : on ne note que les différences.","Ressenti après chaque exercice.","Ajustement immédiat si la sensation n'est pas la bonne."],
     "Paramètres du mobile respectés.","Projet réalisé, ressentis notés.",null,null,null),
-   fiche("Ajustements, envoi, rangement","Fin de séance",8,"Chacun lit l'ajustement proposé par l'appli pour S7.","Un élève envoie le carnet.",["Accepter ou modifier l'ajustement, en une phrase : pourquoi.","Rangement, envoi."],null,"Ajustements justifiés, carnet envoyé.",null,null,null)
-  ]},
- {id:"S7", titre:"Mon projet ajusté (évaluation AFL2 et AFL3, 2)", obj:"Réaliser son projet ajusté à partir de ses ressentis ; adapter la séance à son état de forme.",
-  install:"Comme en S6.", bilan:"Ton ajustement a-t-il donné la sensation attendue ?",
-  prepare:["L'évaluation AFL1 en S8 ou S9.","L'évaluation AFL2 et AFL3 (2e fois)."],
-  tl:[["Accueil, installation",8,"inst"],["État de forme, échauffement",10,"ech"],["Réaliser mon projet ajusté",45,"ex"],["Analyse, envoi, rangement",7,"bil"]],
-  fiches:[
-   fiche("État de forme, échauffement","Échauffement",10,"Dans l'appli : état de forme du jour (1 à 5). Puis échauffement personnalisé.","Chacun pour soi.",["Petite forme : l'appli propose d'alléger la séance du jour (le projet ne change pas).","Échauffement personnalisé."],null,"État de forme noté.",null,null,null),
-   fiche("Réaliser mon projet ajusté","Projet",45,"Projet avec les ajustements acceptés en S6. Le professeur évalue AFL2 et AFL3.","Le partenaire tient son rôle évalué.",
-    ["Séance préremplie avec les ajustements.","Ressenti après chaque exercice.","Le partenaire coche les signes et donne un conseil."],
-    "Sensation attendue obtenue.","Projet réalisé.",null,null,null),
-   fiche("Analyse, envoi, rangement","Fin de séance",7,"Relire ses ressentis S6-S7.","Un élève envoie le carnet.",["Ajustement pour l'évaluation, justifié en une phrase.","Rangement, envoi."],null,"Carnet envoyé.",null,null,null)
+   fiche("Ajustements, envoi, rangement","Fin de séance",8,"Chacun lit l'ajustement proposé par l'appli pour l'évaluation.","Un élève envoie le carnet.",["Accepter ou modifier l'ajustement, en une phrase : pourquoi.","Rangement, envoi."],null,"Ajustements justifiés, carnet envoyé.",null,null,null)
   ]},
  {id:"S8", titre:"Évaluation AFL1 · moitié A", obj:"Moitié A : réaliser son projet devant le professeur (AFL1 sur 12). Moitié B : partenaire (AFL3).",
   install:"Les élèves évalués sont répartis pour que le professeur voie chacun sur au moins 2 exercices.", bilan:"Ce qui était conforme à ton mobile, ce que tu changerais.",
@@ -328,7 +362,7 @@ const SEANCES = [
    fiche("Consignes de l'épreuve","Évaluation",3,"Regroupement.",null,
     ["Réalisation sur 6 points : charges, respiration, posture et trajet, vitesse.","Analyse et régulation sur 6 points : ressentis, cohérence, ajustements (lus dans le carnet).","Le partenaire est évalué dans son rôle AFL3."],
     null,"Chacun connaît les critères.",null,null,"eval"),
-   fiche("Épreuve : projet de la moitié A","Évaluation",45,"La moitié A réalise son projet ; la moitié B est partenaire.","Partenaire : juge ou coach (rôle choisi en S6).",
+   fiche("Épreuve : projet de la moitié A","Évaluation",45,"La moitié A réalise son projet ; la moitié B est partenaire.","Partenaire : juge ou coach (rôle choisi en S7).",
     ["Séance préremplie, ressentis après chaque exercice.","Le professeur observe chaque élève sur au moins 2 exercices."],
     "Paramètres du mobile respectés, ressentis cohérents.","Projet réalisé.",null,null,"eval"),
    fiche("Analyse, envoi, rangement","Fin de séance",6,"Analyse écrite dans l'appli (2 phrases).","Un élève envoie le carnet.",["Ce qui était conforme, ce que je changerais.","Rangement, envoi."],null,"Analyse écrite, carnet envoyé.",null,null,null)
@@ -440,7 +474,7 @@ function schema(spec){
   if(spec === 'test') return `<ol class="ats"><li>Charge de départ légère</li><li>10 valides → on monte, 2 min de récup</li><li>Moins de 10 → fin du test</li><li>5 séries d'essai au maximum</li><li>Charge max = charge × 36 / (37 − rép.)</li></ol>`;
   if(spec === 'eval') return `<table class="evt">${EVAL.afl1.map(([t, p, c]) => `<tr><th>${escM(t)} <small>${p} pts</small></th><td>${c.map(escM).join(' · ')}</td></tr>`).join('')}<tr><th>AFL2 + AFL3 <small>8 pts</small></th><td>${EVAL.repartitions.map(r => r[1]).join(' ; ')}</td></tr></table>`;
   if(spec.startsWith('mobile:')){ const k = spec.slice(7); return k === 'projet' ? MOBILES_ORDRE.map(mobileHTML).join('') : mobileHTML(k); }
-  if(spec.startsWith('circuit:')){ const h = spec.slice(8) === '1' ? CIRCUIT_S1.slice(0, 6) : CIRCUIT_S1.slice(6); return ateliersHTML(h); }
+  if(spec.startsWith('circuit:')){ const h = spec.slice(8) === '1' ? CIRCUIT_S1.slice(0, 7) : CIRCUIT_S1.slice(7); return ateliersHTML(h); }
   if(spec.startsWith('ateliers:')) return ateliersHTML(spec.slice(9).split(','));
   return '';
 }
