@@ -15,7 +15,7 @@ const SUPPORTS = {
  hreg:  {nom:"Haltère réglable", vide:2, disques:true, unite:"par haltère", note:"barre de 2 kg + disques"},
  hfix:  {nom:"Haltère fixe", fixes:[2,3,4,5,8,10,15], unite:"par haltère"},
  curl:  {nom:"Barre curl", vide:6, disques:true, unite:"barre chargée"},
- z:     {nom:"Barre Z", vide:6.5, disques:true, unite:"barre chargée"},
+ z:     {nom:"Barre EZ (barre Z)", vide:6.5, disques:true, unite:"barre chargée"},
  tri:   {nom:"Barre triceps", vide:8, disques:true, unite:"barre chargée"},
  b120:  {nom:"Barre droite 120 cm", vide:6, disques:true, unite:"barre chargée"},
  b160:  {nom:"Barre droite 160 cm", vide:8, disques:true, unite:"barre chargée"},
@@ -51,9 +51,9 @@ const ATELIERS = [
  {id:"rowb", n:14, nom:"Rowing barre buste penché", zone:"haut", groupe:"Dos", muscles:"Grand dorsal, trapèzes, rhomboïdes", support:"b160", type:"charge", menu:true, depart:14,
   crit:["Pieds largeur de bassin, genoux fléchis, buste penché à 45°, dos plat.","Tirer la barre vers le nombril, coudes près du corps.","Le buste ne se relève pas pendant la série."],
   resp:"Souffler en tirant.", secu:"Dos rond = arrêt de la série. Charges modérées.", moins:"Rowing haltère un bras.", plus:"Pause de 1 s barre au ventre."},
- {id:"tirage", n:3, nom:"Tirage menton", zone:"haut", groupe:"Épaules", muscles:"Deltoïdes, trapèzes", support:"b120", type:"charge", menu:true, depart:10,
-  crit:["Debout, mains écartées largeur d'épaules (pas serrées).","Monter la barre le long du corps, coudes devant.","Coudes à hauteur des épaules au maximum, jamais au-dessus."],
-  resp:"Souffler en montant.", secu:"Mains écartées et coudes jamais au-dessus des épaules : sinon l'épaule s'irrite.", moins:"Barre seule.", plus:"Descente en 3 s."},
+ {id:"tirage", n:3, nom:"Tirage menton (barre EZ)", zone:"haut", groupe:"Épaules", muscles:"Deltoïdes, trapèzes", support:"z", type:"charge", menu:true, depart:10,
+  crit:["Debout, mains sur les prises larges de la barre EZ, écartées largeur d'épaules, poignets droits.","Monter la barre le long du corps jusqu'à la poitrine, coudes vers l'extérieur.","Coudes à hauteur des épaules au maximum, jamais au-dessus."],
+  resp:"Souffler en montant.", secu:"Poignets droits, mains écartées et coudes jamais au-dessus des épaules : sinon l'épaule s'irrite.", moins:"Barre seule.", plus:"Descente en 3 s."},
  {id:"dm", n:0, nom:"Développé militaire haltères assis", zone:"haut", groupe:"Épaules", muscles:"Deltoïdes, triceps", support:"hreg", type:"charge", menu:true, puissance:true, puissPct:[30,40], test:true, depart:6,
   crit:["Assis sur le banc, dos droit, abdominaux serrés.","Haltères à hauteur des oreilles, paumes vers l'avant.","Pousser à la verticale sans cambrer."],
   resp:"Souffler en poussant.", secu:"Le dos reste collé au dossier ou droit : pas de cambrure.", moins:"Haltères plus légers.", plus:"Descente en 3 s.", video:"DL4_developpe_militaire_haltere"},
@@ -465,7 +465,7 @@ function dureeProjet(mob, exos){ return Math.round(exos.reduce((a, e) => a + dur
    Coach : niveau 1 je constate (S4-S5), niveau 2 je compte (S6), niveau 3 je fixe un objectif (S7-S9) ;
    comptage et objectif seulement sur l'exercice clé de la séance (le premier par défaut). Un seul rôle AFL3 : coach. */
 const POINT_CLE = {dc:"Fesses collées au banc, barre sur la poitrine", dch:"Coudes à 45°, ni collés ni écartés", rowh:"Dos plat, le coude monte le long du corps",
- rowb:"Dos plat, barre tirée vers le nombril", tirage:"Coudes pas plus haut que les épaules", dm:"Dos collé au dossier, pas de cambrure",
+ rowb:"Dos plat, barre tirée vers le nombril", tirage:"Coudes pas plus haut que les épaules, poignets droits", dm:"Dos collé au dossier, pas de cambrure",
  curlb:"Coudes fixes, pas d'élan du buste", extri:"Coudes fixes, pointés vers le plafond", fentes:"Genou avant au-dessus de la cheville, buste droit",
  pullover:"Bras presque tendus, bassin au sol", oiseau:"Dos plat, les bras montent sur le côté", squath:"Dos droit, genoux dans l'axe des pieds",
  sdtj:"Dos plat, les haltères frôlent les cuisses", hip:"Bassin aligné en haut, haltère calé sur la mousse"};
