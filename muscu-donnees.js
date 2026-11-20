@@ -7,7 +7,7 @@
    v2.0 (20/11/2026) : menu de 14 ateliers, uniquement avec charges (menu:true) ; les ateliers au poids du corps
    servent à l'échauffement et restent décrits ici pour les anciens carnets. S1 circuit, S2-S3 tests (4 à 5 charges
    max par séance), S4 tonification, S5 volume, S6 puissance (6 ateliers, puissPct) et choix, S7 projet, S8-S9 évaluation. */
-const MUSCU_VERSION = 'v2.1';
+const MUSCU_VERSION = 'v2.2';
 const DUREE_PRATIQUE = 70;
 
 /* ---------- Matériel (salle de judo, tatami) ---------- */
