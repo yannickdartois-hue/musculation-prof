@@ -153,7 +153,7 @@ async function importerCarnets(files){
   sauver();rendre();fen(`<h3>Carnets importés</h3><ul class="small">${msgs.map(m=>`<li>${esc(m)}</li>`).join('')}</ul><button type="button" class="bt" data-fermer>Fermer</button>`);
 }
 /* v1.5 : AFL2 (analyse de ses exercices) et AFL3 (coaching du partenaire), S4 à S7, lus dans les carnets */
-const S_AFL=['S4','S5','S6','S7'];
+const S_AFL=['S4','S5','S6','S7','S8'];   // v5.0 : projet en S7-S8
 function exosDe(e,S){return Object.entries(((e.seances||{})[S]||{}).exos||{}).filter(([,x])=>x&&x.real)}
 function statsAfl(b,e){
   const a2={ex:0,an:0,coh:0,obR:0,obP:0},a3={fi:0,niv:0,con:0,aideO:0,aideT:0,obj:0,ten:0};
@@ -190,6 +190,27 @@ function echDe(b,e,seances){const det=[];let comp=0,n=0;
     const jour=k>=7?((e.projet&&e.projet.exos)||[]).map(z=>z.at):k>=4?((b.listes||{})[S]||LISTES_DEFAUT[S]||[]):[];
     const [f,t]=echBilan(x.wc,k,jour);n++;if(f===t)comp++;det.push(S+' '+f+'/'+t)});
   return {comp,n,det:det.join(' · ')}}
+/* v5.0 : tirage au sort de l'évaluation (S9) : 3 exercices parmi ceux réalisés en S7 et S8, au moins un du haut et un du bas */
+function realises(e){return [...new Set(['S7','S8'].flatMap(S=>Object.entries(((e.seances||{})[S]||{}).exos||{}).filter(([,x])=>x&&x.real).map(([at])=>at)))]}
+function tirer(pool){
+  const m=a=>a.slice().sort(()=>Math.random()-.5),z=at=>(ATELIERS.find(a=>a.id===at)||{}).zone;
+  const h=m(pool.filter(at=>z(at)==='haut')),b=m(pool.filter(at=>z(at)==='bas')),r=[];
+  if(h.length)r.push(h[0]);if(b.length)r.push(b[0]);
+  m(pool).forEach(at=>{if(r.length<3&&!r.includes(at))r.push(at)});
+  return {l:r,ok:r.length===3&&!!h.length&&!!b.length};
+}
+async function vueTirage(c,refaire){
+  DB.tirages=DB.tirages||{};const T=DB.tirages[c]=DB.tirages[c]||{};
+  const L=[];Object.values(DB.carnets).filter(b=>(b.classe||'')===c).forEach(b=>b.e.forEach(e=>L.push(e)));
+  L.forEach(e=>{if(!T[e.nom]||refaire===true||refaire===e.nom){const p=realises(e);T[e.nom]=Object.assign(tirer(p),{pool:p.length,date:new Date().toISOString().slice(0,10)})}});sauver();
+  const nomA=at=>(ATELIERS.find(a=>a.id===at)||{}).nom||at;
+  const r={};L.forEach(e=>{if(T[e.nom].l.length)r[e.nom]=T[e.nom].l});
+  let svg='';try{svg=svgQR(await encoderQR({a:'MUS',v:1,t:'T',c,r}))}catch(x){svg='<p class="alerte">Trop d\'élèves pour un seul QR : faites deux groupes.</p>'}
+  fen(`<h3>🎲 Tirage au sort S9 · ${esc(c)}</h3><p class="small">3 exercices par élève parmi ceux réalisés en S7 et S8 (carnets reçus), au moins un du haut et un du bas du corps.</p>
+   <div class="tbw"><table class="tb small"><tr><th>Élève</th><th>Exercices tirés</th><th></th></tr>${L.sort((a,b)=>norm(a.nom).localeCompare(norm(b.nom))).map(e=>{const t=T[e.nom];return `<tr><td><b>${esc(e.nom)}</b></td><td>${t.l.length?t.l.map(nomA).map(esc).join(' · '):'<span class="alerte">aucun exercice réalisé en S7-S8</span>'}${t.l.length&&!t.ok?` <span class="alerte">⚠️ ${t.pool<3?'moins de 3 exercices réalisés':'pas de haut et de bas'}</span>`:''}</td><td><button type="button" class="bt mini" data-retirer-t="${esc(c)}" data-nom="${esc(e.nom)}">↻</button></td></tr>`}).join('')}</table></div>
+   <p class="small"><b>Les élèves scannent ce QR</b> (bouton « QR de la classe », séance S9) : chaque binôme reçoit ses exercices.</p><div class="qr">${svg}</div>
+   <div class="rangee"><button type="button" class="bt" data-tirage-tout="${esc(c)}">↻ Tout retirer au sort</button><button type="button" class="bt" data-fermer>Fermer</button></div>`,true);
+}
 function lignesCarnets(){
   const L=[];Object.values(DB.carnets).forEach(b=>b.e.forEach(e=>{
     const seances=SEANCES.filter(s=>e.seances[s.id]&&Object.keys(e.seances[s.id]).length||(s.id==='S2'&&Object.keys(e.tests||{}).length)).map(s=>s.id);
@@ -200,10 +221,10 @@ function vCarnets(){
   const L=lignesCarnets(),C=[...new Set(L.map(x=>x.classe))].sort();
   return `<h2>Carnets reçus</h2><section class="carte"><p class="small">Déposez ici les fichiers que les binômes ont envoyés dans le Nuage (un ou plusieurs à la fois). Le plus récent de chaque binôme est gardé.</p><label class="bt act">📂 Importer des carnets<input id="carnetsFic" type="file" accept=".json,application/json" multiple hidden></label></section>
   ${L.length?C.map(c=>{const lc=L.filter(x=>x.classe===c).sort((a,b)=>norm(a.nom).localeCompare(norm(b.nom))),inscrits=(DB.classes[c]||{}).eleves||[],manque=inscrits.filter(n=>!lc.some(x=>norm(x.nom)===norm(n)));
-   return `<section class="carte"><h3>${esc(c||'Sans classe')} · ${lc.length} élève(s)</h3><div class="tbw"><table class="tb"><tr><th>Élève</th><th>Binôme</th><th>Séances</th><th title="Séances où les 5 parties de l'échauffement guidé sont cochées">Échauf.</th><th>Test 10 RM</th><th>Mobile</th><th>Projet</th><th>Ajust.</th><th>AFL2/3 · rôle</th><th title="S4 à S7 : exercices analysés (ressenti, répétitions, suite), choix cohérents ou justifiés, objectifs du coach repris">AFL2 · analyse</th><th title="S4 à S7 : fiches coach remplies, niveau atteint, conseils jugés utiles par le partenaire, objectifs tenus">AFL3 · coaching</th><th>Dernier envoi</th></tr>
+   return `<section class="carte"><h3>${esc(c||'Sans classe')} · ${lc.length} élève(s)</h3><div class="rangee" style="margin:4px 0 8px"><button type="button" class="bt act" data-tirage="${esc(c)}">🎲 Tirage au sort S9</button></div><div class="tbw"><table class="tb"><tr><th>Élève</th><th>Binôme</th><th>Séances</th><th title="Séances où les 5 parties de l'échauffement guidé sont cochées">Échauf.</th><th>Test 10 RM</th><th>Mobile</th><th>Projet</th><th>Ajust.</th><th>AFL2/3 · rôle</th><th title="S4 à S7 : exercices analysés (ressenti, répétitions, suite), choix cohérents ou justifiés, objectifs du coach repris">AFL2 · analyse</th><th title="S4 à S7 : fiches coach remplies, niveau atteint, conseils jugés utiles par le partenaire, objectifs tenus">AFL3 · coaching</th><th>Dernier envoi</th></tr>
     ${lc.map(x=>`<tr><td><button type="button" class="lien" data-lire="${esc(x.id)}" data-i="${x.i}" title="Lire ses analyses et son coaching"><b>${esc(x.nom)}</b></button></td><td class="small">${esc(x.binome)}</td><td class="small">${x.seances.join(' ')}</td><td class="small" title="${esc(x.ech.det)}">${x.ech.n?x.ech.comp+'/'+x.ech.n+'<br><span class="muted">'+esc(x.ech.det)+'</span>':'—'}</td><td>${x.rm}/${ATELIERS_TEST.length}${x.prog?`<br><span class="small" title="ateliers dont la charge max a monté depuis le premier test">↑ ${x.prog.n} atelier${x.prog.n>1?'s':''}, +${x.prog.moy} %</span>`:''}</td><td>${x.mob?esc(MOBILES[x.mob].nom):'—'}</td><td>${x.proj?x.proj+' ex.':'—'}</td><td>${x.aj}</td><td class="small">${esc(x.afl.rep||'—')} · ${esc(x.afl.role?((EVAL.roles.find(r=>r[0]===x.afl.role)||[])[1]||(EVAL.roleAncien||{})[x.afl.role]||x.afl.role):'—')}</td><td class="small">${x.st.a2.ex?`<b>${x.st.a2.an}/${x.st.a2.ex}</b> analysés<br>cohérents ${pc(x.st.a2.coh,x.st.a2.an)}${x.st.a2.obR?`<br>objectifs repris ${x.st.a2.obP}/${x.st.a2.obR}`:''}`:'—'}</td><td class="small">${x.st.a3.fi?`<b>${x.st.a3.fi}</b> fiches · niv. ${x.st.a3.niv}<br>conseils utiles ${x.st.a3.aideT?x.st.a3.aideO+'/'+x.st.a3.aideT:'—'}${x.st.a3.obj?`<br>objectifs tenus ${x.st.a3.ten}/${x.st.a3.obj}`:''}`:'—'}</td><td class="small">${esc(x.exp.slice(0,10))}</td></tr>`).join('')}</table></div>
     ${manque.length?`<p class="small muted">Pas encore de carnet : ${manque.map(esc).join(', ')}.</p>`:''}</section>`}).join(''):'<p class="muted">Aucun carnet reçu.</p>'}
-  <p class="small muted">La notation (AFL1, AFL2, AFL3) à partir des carnets viendra dans une prochaine version.</p>`;
+  <p class="small muted">Tirage S9 : faites-le après avoir importé les carnets envoyés en fin de S8. La notation (AFL1, AFL2, AFL3) à partir des carnets viendra dans une prochaine version.</p>`;
 }
 /* ---------- Sauvegarde ---------- */
 function vSauvegarde(){
@@ -218,6 +239,9 @@ document.addEventListener('click',async ev=>{
   const t=ev.target.closest('button');if(!t)return;const d=t.dataset;
   if(d.vue){DB.vue=d.vue;sauver();rendre();return}
   if(d.lire){lireAfl(d.lire,d.i);return}
+  if(d.tirage!=null){vueTirage(d.tirage);return}
+  if(d.tirageTout!=null){if(!confirm('Refaire le tirage de toute la classe ?'))return;document.querySelector('.voile')?.remove();vueTirage(d.tirageTout,true);return}
+  if(d.retirerT!=null){document.querySelector('.voile')?.remove();vueTirage(d.retirerT,d.nom);return}
   if(d.classe){DB.classe=d.classe;sauver();rendre();return}
   const c=DB.classe;
   switch(d.act){

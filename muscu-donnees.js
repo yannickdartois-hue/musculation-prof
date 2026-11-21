@@ -6,8 +6,8 @@
    Paramètres des mobiles : cahier des charges du 13/11/2026 (force maximale retirée).
    v2.0 (20/11/2026) : menu de 14 ateliers, uniquement avec charges (menu:true) ; les ateliers au poids du corps
    servent à l'échauffement et restent décrits ici pour les anciens carnets. S1 circuit, S2-S3 tests (4 à 5 charges
-   max par séance), S4 tonification, S5 volume, S6 puissance (6 ateliers, puissPct) et choix, S7 projet, S8-S9 évaluation. */
-const MUSCU_VERSION = 'v3.1';
+   max par séance), S4 tonification, S5 volume, S6 puissance (6 ateliers, puissPct) et choix, S7 projet, S7-S8 projet, S9 évaluation sur 3 exercices tirés au sort (v5.0). */
+const MUSCU_VERSION = 'v4.0';
 const DUREE_PRATIQUE = 70;
 
 /* ---------- Matériel (salle de judo, tatami) ---------- */
@@ -191,7 +191,7 @@ const ECHAUF_LIB = [
   ["rtwist","Russian twist sans charge","Assis, buste penché en arrière dos droit : tournez d'un côté puis de l'autre."]]}
 ];
 /* listes d'exercices par défaut des séances de mobiles (déplacées ici en v3.0 pour l'outil prof) */
-const LISTES_DEFAUT = {S4:['dch','rowh','dm','squath','fentes','hip'], S5:['dch','rowb','squath','sdtj'], S6:['dch','rowh','squath','hip']};
+const LISTES_DEFAUT = {S4:['dch','rowh','squath'], S5:['dc','rowb','fentes'], S6:['dm','hip','sbox']};   // v5.0 : 3 exercices, différents d'une séance à l'autre
 /* v3.0 : bilan de l'échauffement guidé (parties faites), partagé par l'appli élève et l'outil prof */
 const ECH_PARTS = {P1:[['corde','jjack','genoux','talons','chasses','squatjack','burpee','fente_m','chenille','ours','crabe'], 4],
  P2:[['mob_cheville','mob_genou','mob_hanche','mob_buste','mob_epaule','mob_poignet'], 6],
@@ -355,106 +355,90 @@ const SEANCES = [
     ["3 min : rangement.","2 min : onglet Charges : chacun vérifie ses 8 à 10 charges max ; un atelier manquant se teste en saisie directe en S4.","2 min : résultat du défi par équipes (cumul S2 + S3).","Envoi du carnet."],
     "Rangement complet.","Charges max vérifiées, défi proclamé.",null,null,"test")
   ]},
- {id:"S4", titre:"Mobile Tonification", obj:"Éprouver l'endurance de force : 20 répétitions à 50 %, 17 à 55 % ou 15 à 60 %, récupération courte, en circuit ; vérifier que ses sensations correspondent au mobile.",
-  install:"6 ateliers en circuit (3 du haut du corps, 3 du bas du corps), parmi les ateliers où le binôme a une charge max. Les charges sont calculées par l'appli (50-60 % de la charge max).",
+ {id:"S4", titre:"Mobile Tonification", obj:"Éprouver l'endurance de force sur 3 ou 4 exercices choisis parmi ses charges max : 20 répétitions à 50 %, 17 à 55 % ou 15 à 60 %, récupération courte ; vérifier que ses sensations correspondent au mobile.",
+  install:"Chaque binôme choisit 3 ou 4 exercices où il a une charge max (au moins un du haut et un du bas du corps). Les charges sont calculées par l'appli.",
   bilan:"Ta sensation était-elle « fatigue d'une zone » ? Sinon, qu'as-tu changé ?",
-  prepare:["Le premier des 3 mobiles éprouvés.","Les ressentis comparés en S6 pour choisir son mobile.","L'évaluation AFL2 et AFL3 : analyse et coaching notés après chaque exercice, de la S4 à la S7."],
-  tl:[["Accueil, installation",8,"inst"],["Échauffement",10,"ech"],["Le mobile Tonification",4,"ex"],["Circuit, tour 1",12,"ex"],["Circuit, tour 2",12,"ex"],["Circuit, tour 3",12,"ex"],["Ressentis, envoi, rangement",8,"bil"]],
+  prepare:["Le premier des 3 mobiles éprouvés.","Le choix définitif du mobile en S7.","L'évaluation AFL2 et AFL3 : analyse et coaching notés après chaque exercice, de la S4 à la S8."],
+  tl:[["Accueil, installation",8,"inst"],["Échauffement",12,"ech"],["Le mobile Tonification",4,"ex"],["Mes 3 ou 4 exercices",38,"ex"],["Ressentis, envoi, rangement",8,"bil"]],
   fiches:[
-   fiche("Échauffement","Échauffement",10,ECH_BASE,"Chacun pour soi.",["Échauffement en 3 parties.","P3 : les 6 ateliers du circuit, à vide."],"Pouls pris.","Prêt pour le circuit.",null,null,null),
+   fiche("Échauffement","Échauffement",12,ECH_BASE,"À deux : une coche vaut pour le binôme.",["Échauffement guidé dans l'appli (5 parties).","Spécifique : les exercices du jour, à vide."],"Pouls pris.","Prêt.",null,null,null),
    fiche("Le mobile Tonification","Consignes",4,"Regroupement. Le professeur montre le tableau du mobile.","Le partenaire vérifie le rythme et la respiration.",
-    ["Un couple au choix : 50 % × 20, 55 % × 17 ou 60 % × 15 ; 30 s à 1 min de récupération.","Rythme régulier, respiration continue : pas de vitesse.","Sensation attendue : fatigue d'une zone du corps, sans brûlure forte.","Après chaque exercice, pendant les séries, le partenaire coache (point clé, signes) ; à la fin de l'exercice, chacun note son ressenti, ses répétitions en réserve et ce qu'il fera la prochaine fois.","Dès cette séance, l'analyse et le coaching comptent pour l'AFL2 et l'AFL3 : chacun choisit sa répartition AFL2/AFL3 dans l'appli (rôle AFL3 : coach)."],
-    null,"Chacun connaît sa charge sur chaque atelier.",null,null,"mobile:tonif"),
-   fiche("Circuit, tour 1","Circuit",12,"6 ateliers, 2 min par atelier pour le binôme : chacun fait sa série (environ 45 s) pendant que l'autre récupère.","Le partenaire compte et regarde le rythme.",
-    ["Charge prévue par l'appli : on ne note que si on change.","15 à 20 répétitions régulières.","Ressenti noté après la série.","Au signal : atelier suivant."],
-    "Rythme régulier du début à la fin.","Ressentis notés sur les 6 ateliers.","Moins de répétitions (15).","Plus de répétitions (20).","mobile:tonif"),
-   fiche("Circuit, tour 2","Circuit",12,"Même circuit. 1 à 2 min entre les tours.","Le partenaire coche les signes qu'il voit.",
-    ["Même charge, ou ajustée d'après le ressenti du tour 1 (l'appli le propose).","Ressenti noté."],
-    "Respiration continue.","Ajustements faits si le ressenti n'était pas le bon.",null,null,"mobile:tonif"),
-   fiche("Circuit, tour 3","Circuit",12,"Même circuit.","Le partenaire donne un conseil à chaque atelier.",
-    ["Dernier tour : la fatigue d'une zone doit être nette.","Ressenti noté."],
-    null,"3 tours faits, ressentis notés.",null,null,"mobile:tonif"),
+    ["Un couple au choix : 50 % × 20, 55 % × 17 ou 60 % × 15 ; 30 s à 1 min de récupération.","Rythme régulier, respiration continue : pas de vitesse.","Sensation attendue : fatigue d'une zone du corps, sans brûlure forte.","Après chaque exercice : ressenti, réserve, suite ; le partenaire coache."],
+    null,"Chacun connaît sa charge sur chaque exercice.",null,null,"mobile:tonif"),
+   fiche("Mes 3 ou 4 exercices","Tonification",38,"Le binôme enchaîne ses exercices avec le chrono binôme : l'un travaille, l'autre récupère et le regarde.","Le partenaire coche le point clé et donne un conseil.",
+    ["Charge prévue par l'appli : on ne note que si on change.","2 à 4 séries par exercice.","Ressenti noté après chaque exercice."],
+    "Rythme régulier du début à la fin.","3 ou 4 exercices faits, ressentis notés.","Couple plus léger.","Couple plus lourd.","mobile:tonif"),
    fiche("Ressentis, envoi, rangement","Fin de séance",8,"Rangement puis bilan rapide.","Un élève du binôme envoie le carnet.",
     ["L'appli montre la cohérence de tes ressentis avec le mobile.","Rangement.","Envoi du carnet."],null,"Carnet envoyé.",null,null,null)
   ]},
- {id:"S5", titre:"Mobile Volume", obj:"Éprouver le volume : 12 répétitions à 65 %, 10 à 70 % ou 8 à 75 %, mouvement lent, 1 min 30 à 2 min de récupération ; reconnaître la brûlure.",
-  install:"Les binômes choisissent 4 exercices : 2 du haut du corps, 2 du bas. Charges à 65-75 % calculées par l'appli (couples 65 % × 12, 70 % × 10, 75 % × 8).",
+ {id:"S5", titre:"Mobile Volume", obj:"Éprouver le volume sur 3 ou 4 AUTRES exercices (aucun de la S4) : 12 répétitions à 65 %, 10 à 70 % ou 8 à 75 %, mouvement lent, 1 min 30 à 2 min de récupération ; reconnaître la brûlure.",
+  install:"Chaque binôme choisit 3 ou 4 exercices, tous différents de ceux de la S4 (l'appli refuse les mêmes). Au moins un du haut et un du bas du corps.",
   bilan:"As-tu senti « ça brûle, ça gonfle » ? À quelle série ?",
-  prepare:["Le deuxième mobile éprouvé.","L'évaluation AFL2 et AFL3 : analyse et coaching notés après chaque exercice, de la S4 à la S7."],
-  tl:[["Accueil, installation",8,"inst"],["Échauffement",10,"ech"],["Le mobile Volume",4,"ex"],["Bloc haut du corps",22,"ex"],["Bloc bas du corps",22,"ex"],["Ressentis, envoi, rangement",8,"bil"]],
+  prepare:["Le deuxième mobile éprouvé.","L'évaluation AFL2 et AFL3."],
+  tl:[["Accueil, installation",8,"inst"],["Échauffement",12,"ech"],["Le mobile Volume",4,"ex"],["Mes 3 ou 4 exercices",38,"ex"],["Ressentis, envoi, rangement",8,"bil"]],
   fiches:[
-   fiche("Échauffement","Échauffement",10,ECH_BASE,"Chacun pour soi.",["Échauffement en 3 parties.","P3 : 1 série légère de 10 sur chaque exercice choisi."],null,"Prêt.",null,null,null),
+   fiche("Échauffement","Échauffement",12,ECH_BASE,"À deux.",["Échauffement guidé dans l'appli.","Spécifique : 1 série légère de 10 sur chaque exercice choisi."],null,"Prêt.",null,null,null),
    fiche("Le mobile Volume","Consignes",4,"Regroupement : démonstration du tempo lent (2-3 s à la descente).","Le partenaire compte le tempo à voix haute.",
-    ["Un couple au choix : 65 % × 12, 70 % × 10 ou 75 % × 8 ; 3 à 5 séries.","Descente en 2-3 s, montée en 1-2 s.","Finir à 1-2 répétitions de l'échec : la dernière est dure mais propre.","Sensation attendue : brûlure, « ça gonfle »."],
+    ["Un couple au choix : 65 % × 12, 70 % × 10 ou 75 % × 8 ; 3 à 5 séries.","Descente en 2-3 s, montée en 1-2 s.","Finir à 1-2 répétitions de l'échec : la dernière est dure mais propre.","Récupération de 1 min 30 à 2 min : on attend, même si le partenaire a fini sa série."],
     null,"Chacun connaît ses charges.",null,null,"mobile:volume"),
-   fiche("Bloc haut du corps","Volume",22,"2 exercices du haut du corps, 4 séries chacun. Pendant la récupération de l'un, l'autre fait sa série.","Le partenaire compte le tempo et coche les signes.",
-    ["Séance préremplie dans l'appli : on ne note que les différences.","Ressenti après chaque exercice.","Brûlure trop tôt ou pas du tout : l'appli propose un ajustement."],
-    "Tempo lent tenu jusqu'à la dernière répétition.","2 exercices faits, ressentis notés.","Moins de séries (3).","Une série de plus (5).","mobile:volume"),
-   fiche("Bloc bas du corps","Volume",22,"2 exercices du bas du corps, 4 séries chacun.","Même fonctionnement.",
-    ["Par exemple squat haltères et hip thrust, ou fentes et soulevé de terre jambes semi-tendues.","Ressenti après chaque exercice."],
-    "Tempo lent tenu.","4 exercices faits, ressentis notés.",null,null,"mobile:volume"),
+   fiche("Mes 3 ou 4 exercices","Volume",38,"Exercices différents de la S4. Chrono binôme : l'un travaille, l'autre récupère et coache.","Le partenaire compte le tempo et coche le point clé.",
+    ["Séance préremplie dans l'appli : on ne note que les différences.","Ressenti après chaque exercice.","Brûlure trop tôt ou pas du tout : l'appli propose de changer de couple."],
+    "Tempo lent tenu jusqu'à la dernière répétition.","3 ou 4 exercices faits, ressentis notés.","Une série de moins.","Une série de plus.","mobile:volume"),
    fiche("Ressentis, envoi, rangement","Fin de séance",8,"Rangement puis bilan.","Un élève envoie le carnet.",["Cohérence des ressentis avec le mobile.","Rangement, envoi."],null,"Carnet envoyé.",null,null,null)
   ]},
- {id:"S6", titre:"Mobile Puissance, choisir son mobile", obj:"Éprouver la puissance : 3 à 6 répétitions à 30-60 %, le plus vite possible, récupération complète ; comparer les 3 mobiles, choisir le sien et construire son échelle personnelle.",
-  install:"Les ateliers de puissance : développé couché (barre ou haltères sur steps), développé militaire, rowing haltère, squat haltères, saut sur box (2 box en bois sur le sol dur, arête avant protégée par de la mousse, côté 40 ou 50 cm), hip thrust. Chaque binôme en fait 4, dont au moins un du bas du corps.",
-  bilan:"Quel mobile choisis-tu, et pourquoi ? Quelle sensation te le dit ?",
-  prepare:["Le choix du mobile pour le projet (S7 à S9).","L'échelle de ressentis personnelle.","L'évaluation AFL2 et AFL3 : analyse et coaching notés après chaque exercice, de la S4 à la S7."],
-  tl:[["Accueil, installation",8,"inst"],["Échauffement progressif",12,"ech"],["Le mobile Puissance",3,"ex"],["Bas du corps : vitesse maximale",15,"ex"],["Haut du corps : vitesse maximale",17,"ex"],["Comparer, choisir, mon échelle",10,"ex"],["Envoi, rangement",5,"bil"]],
+ {id:"S6", titre:"Mobile Puissance (2 niveaux)", obj:"Tout le monde éprouve la puissance, à son niveau : découverte (30 % × 6) ou confirmé sur avis du professeur (45 % × 5, puis 60 % × 3). 3 ou 4 exercices, dont au moins 2 nouveaux.",
+  install:"Ateliers de puissance : développé couché (barre ou haltères sur steps), développé militaire, rowing haltère, squat haltères, saut sur box (2 box en bois sur le sol dur, arête protégée, 40 ou 50 cm), hip thrust. Au moins 2 exercices jamais faits en S4 et S5.",
+  bilan:"As-tu senti la « compacité », la vitesse ? Ce mobile te correspond-il ?",
+  prepare:["Le choix définitif du mobile en S7, après avoir éprouvé les trois.","L'échelle de ressentis personnelle."],
+  tl:[["Accueil, installation",8,"inst"],["Échauffement progressif",12,"ech"],["Le mobile Puissance, les 2 niveaux",4,"ex"],["Mes 3 ou 4 exercices",36,"ex"],["Mon échelle, envoi, rangement",10,"bil"]],
   fiches:[
-   fiche("Échauffement progressif","Échauffement",12,ECH_BASE+" P4 · Mise en route nerveuse : 2 × 5 squats sautés et 2 × 5 pompes rapides, au poids du corps, réception silencieuse.","Chacun pour soi.",["Échauffement en 4 parties, mise en route nerveuse à la fin."],"Réceptions silencieuses.","Prêt.",null,null,null),
-   fiche("Le mobile Puissance","Consignes",3,"Regroupement.","Le partenaire regarde la vitesse : dès qu'elle baisse, il dit STOP.",
-    ["Charge selon l'atelier : 30-45 % aux développés couchés, 30-40 % au militaire, 40-50 % au rowing haltère, 40-60 % au squat haltères et au hip thrust.","3 à 6 répétitions, 4 séries, 2 à 3 min de récupération complète.","Montée la plus rapide possible, descente contrôlée en 1 à 2 s, pas de rebond.","Arrêt dès que la vitesse baisse : le partenaire touche « la vitesse a baissé ».","Sensation attendue : tension générale, sans brûlure."],
-    null,"Chacun sait quand s'arrêter.",null,null,"mobile:puiss"),
-   fiche("Bas du corps : vitesse maximale","Puissance",15,"Squat haltères (remontée explosive jusqu'à la pointe des pieds, sans quitter le sol), saut sur box juste après (3 à 5 sauts) ou hip thrust (poussée explosive des hanches, 1 s en haut). 4 séries de 4 à 6.","Le partenaire juge la vitesse et dit STOP dès qu'elle baisse.",
-    ["Charge à 40-60 % (l'appli la calcule).","Le plus vite possible à la montée, descente contrôlée.","Vitesse qui baisse : la série s'arrête, même avant 4 répétitions.","Saut sur box : 3 à 5 sauts, réception silencieuse, redescente en marchant ; box à 40 cm puis 50 cm, jamais 60."],
-    "Vitesse maximale à chaque répétition.","1 à 2 exercices, ressentis notés.","Charge à 40 %.","Charge à 60 %.","mobile:puiss"),
-   fiche("Haut du corps : vitesse maximale","Puissance",17,"Développé couché (barre avec pareur, ou haltères sur steps), développé militaire assis, rowing haltère. 4 séries de 4 à 6.","Le partenaire juge la vitesse ; il pare au développé couché barre.",
-    ["Pousser ou tirer le plus vite possible, redescendre en contrôlant.","Vitesse qui baisse : la série s'arrête.","Ressenti après chaque exercice : tension générale ?"],
-    "Vitesse maximale à chaque répétition.","2 à 3 exercices, ressentis notés.","Charge au bas de la fourchette.","Charge au haut de la fourchette.","mobile:puiss"),
-   fiche("Comparer, choisir, mon échelle","Choix",10,"Chacun avec son téléphone, assis sur le tatami.","Le partenaire aide à relire les ressentis.",
-    ["L'appli montre tes ressentis en Tonification, Volume et Puissance côte à côte.","Choisis ton mobile pour le projet (S7 à S9).","Construis ton échelle : pour chaque niveau, ton mot à toi."],
-    "Choix justifié par une sensation.","Mobile choisi, échelle faite.",null,null,"echelle"),
-   fiche("Envoi, rangement","Fin de séance",5,"Rangement puis envoi.","Un élève envoie le carnet.",["Rangement.","Envoi du carnet.","Bilan : quel mobile, pourquoi ?"],null,"Carnet envoyé.",null,null,null)
+   fiche("Échauffement progressif","Échauffement",12,ECH_BASE,"À deux.",["Échauffement guidé, squat jump en mise en route."],"Réceptions silencieuses.","Prêt.",null,null,null),
+   fiche("Le mobile Puissance, les 2 niveaux","Consignes",4,"Regroupement. Le professeur passe ensuite débloquer le niveau confirmé (code du cours tapé sur le téléphone).","Le partenaire regarde la vitesse : dès qu'elle baisse, il dit STOP.",
+    ["Découverte (tout le monde) : 30 % × 6, trajet parfait d'abord, puis vitesse.","Confirmé (sur avis du professeur) : 45 % × 5, puis 60 % × 3.","Montée la plus rapide possible, descente contrôlée, pas de rebond.","2 à 3 min de récupération : on attend, même si le partenaire a fini."],
+    null,"Chacun connaît son niveau.",null,null,"mobile:puiss"),
+   fiche("Mes 3 ou 4 exercices","Puissance",36,"Au moins 2 exercices nouveaux (jamais faits en S4 et S5). Chrono binôme.","Le partenaire juge la vitesse et dit STOP ; il pare au développé couché barre.",
+    ["Vitesse qui baisse : la série s'arrête.","Saut sur box : 3 à 5 sauts, réception silencieuse, redescente en marchant.","Ressenti après chaque exercice : tension générale ?"],
+    "Vitesse maximale à chaque répétition.","3 ou 4 exercices, ressentis notés.","Niveau découverte.","Niveau confirmé.","mobile:puiss"),
+   fiche("Mon échelle, envoi, rangement","Fin de séance",10,"Chacun construit son échelle de ressentis.","Un élève envoie le carnet.",["Pour chaque niveau de l'échelle, ton mot à toi.","Rangement, envoi.","En S7 : choix définitif du mobile."],null,"Échelle faite, carnet envoyé.",null,null,"echelle")
   ]},
- {id:"S7", titre:"Mon projet", obj:"Construire un projet cohérent avec son mobile (haut et bas du corps, 4 à 6 exercices) et le réaliser ; ajuster pour l'évaluation (l'AFL2 et l'AFL3 sont observées depuis la S4).",
-  install:"Les 14 ateliers sont accessibles. Banc de développé couché : 1 binôme ; barres triceps : 2 ; steps recouverts du tapis pour le rowing haltère et le pull-over ; tapis et mousse pour le hip thrust au sol ; deux piles de steps à hauteur des genoux pour la barre du soulevé de terre.",
-  bilan:"Ton projet tient-il dans la séance ? Qu'as-tu ajusté ?",
-  prepare:["Le projet réalisé en S8 et S9.","L'évaluation AFL2 et AFL3."],
-  tl:[["Accueil, installation",8,"inst"],["Échauffement personnalisé",10,"ech"],["Construire mon projet",12,"ex"],["Réaliser mon projet",38,"ex"],["Ajustements, envoi, rangement",8,"bil"]],
+ {id:"S7", titre:"Projet (1) : je me spécialise", obj:"Comparer les 3 mobiles éprouvés, choisir son mobile DÉFINITIF, construire son projet (3 à 6 exercices) et en réaliser 3.",
+  install:"Les 14 ateliers sont accessibles. Banc de développé couché : 1 binôme ; barres triceps : 2 ; steps recouverts du tapis pour le rowing haltère, le pull-over et le développé couché haltères ; deux piles de steps à hauteur des genoux pour la barre du soulevé de terre.",
+  bilan:"Pourquoi ce mobile ? Quelle sensation te l'a dit ?",
+  prepare:["La séance de projet S8.","Le tirage au sort de 3 exercices pour l'évaluation en S9, parmi ceux travaillés en S7 et S8."],
+  tl:[["Accueil, installation",6,"inst"],["Comparer, choisir mon mobile, mon projet",10,"ex"],["Échauffement personnalisé",10,"ech"],["Mes 3 exercices du jour",36,"ex"],["Ajustements, envoi, rangement",8,"bil"]],
   fiches:[
-   fiche("Échauffement personnalisé","Échauffement",10,"Chaque élève s'échauffe pour SON projet : P1 course et pouls, P2 réveil musculaire, P3 les exercices de son projet à vide.","Le partenaire vérifie.",["Échauffement adapté à ses exercices."],"Échauffement en lien avec le projet.","Fait.",null,null,null),
-   fiche("Construire mon projet","Projet",12,"Dans l'appli, onglet Projet.","Le partenaire relit le projet.",
-    ["Mobile choisi en S6 (on peut encore changer).","Haut et bas du corps, 4 à 6 exercices (Tonification : 6 ; Puissance : parmi les 6 ateliers de puissance).","L'appli vérifie l'équilibre, la durée (60 min au plus) et les places (banc de développé couché : 1).","Répartition AFL2/AFL3 choisie en S4 : dernière chance de la changer (verrouillée en S8). Rôle AFL3 : coach pour tous."],
-    "Projet équilibré qui tient dans la séance.","Projet validé dans l'appli.",null,null,"mobile:projet"),
-   fiche("Réaliser mon projet","Projet",38,"Le binôme enchaîne les exercices de ses deux projets. Le professeur observe et évalue AFL2 et AFL3.","Le partenaire coache (rôle évalué AFL3) : point clé, signes, conseil, objectif.",
-    ["Séance préremplie : on ne note que les différences.","Ressenti après chaque exercice.","Ajustement immédiat si la sensation n'est pas la bonne."],
-    "Paramètres du mobile respectés.","Projet réalisé, ressentis notés.",null,null,null),
-   fiche("Ajustements, envoi, rangement","Fin de séance",8,"Le choix « La prochaine fois, je… » de chaque exercice règle le projet de la S8.","Un élève envoie le carnet.",["Choix différent de la proposition de l'appli : une phrase pour dire pourquoi.","Rangement, envoi."],null,"Ajustements justifiés, carnet envoyé.",null,null,null)
+   fiche("Comparer, choisir mon mobile, mon projet","Projet",10,"Dans l'appli : comparer ses ressentis S4, S5, S6, choisir son mobile (définitif), puis onglet Projet.","Le partenaire relit le projet.",
+    ["Mobile choisi une fois pour toutes. Puissance : seulement si le niveau confirmé a été débloqué par le professeur.","Projet : 3 à 6 exercices, haut et bas du corps, un couple % × répétitions par exercice.","Chaque séance de projet : 3 exercices du projet (on peut en changer en S8).","Attention : l'évaluation tire au sort 3 exercices parmi ceux faits en S7 et S8."],
+    "Choix justifié par une sensation.","Mobile choisi, projet construit.",null,null,"mobile:projet"),
+   fiche("Échauffement personnalisé","Échauffement",10,"Échauffement guidé : l'activation et le spécifique suivent les exercices du jour.","Le partenaire vérifie.",["Échauffement adapté à ses exercices."],null,"Fait.",null,null,null),
+   fiche("Mes 3 exercices du jour","Projet",36,"Chacun fait 3 exercices de son projet, avec le chrono binôme.","Le partenaire coache (AFL3) : point clé, signes, conseil, objectif.",
+    ["Séance préremplie : on ne note que les différences.","Ressenti après chaque exercice.","Ajustement si la sensation n'est pas la bonne."],
+    "Paramètres du mobile respectés.","3 exercices faits, ressentis notés.",null,null,null),
+   fiche("Ajustements, envoi, rangement","Fin de séance",8,"Le choix « La prochaine fois, je… » règle le projet de la S8.","Un élève envoie le carnet.",["Choix différent de la proposition de l'appli : une phrase pour dire pourquoi.","Rangement, envoi."],null,"Ajustements justifiés, carnet envoyé.",null,null,null)
   ]},
- {id:"S8", titre:"Évaluation AFL1 · moitié A", obj:"Moitié A : réaliser son projet devant le professeur (AFL1 sur 12). Moitié B : partenaire (AFL3).",
-  install:"Les élèves évalués sont répartis pour que le professeur voie chacun sur au moins 2 exercices.", bilan:"Ce qui était conforme à ton mobile, ce que tu changerais.",
-  prepare:["La note d'AFL1 de la moitié A."],
-  tl:[["Accueil, installation",6,"inst"],["Échauffement personnalisé",10,"ech"],["Consignes de l'épreuve",3,"ex"],["Épreuve : projet de la moitié A",45,"ex"],["Analyse, envoi, rangement",6,"bil"]],
+ {id:"S8", titre:"Projet (2) : je m'entraîne et j'ajuste", obj:"Réaliser 3 exercices de son projet (les mêmes ou d'autres), ajuster ; tous les exercices faits en S7 et S8 peuvent être tirés au sort pour l'évaluation.",
+  install:"Comme en S7.", bilan:"Quel exercice maîtrises-tu le moins ? Que vas-tu soigner en S9 ?",
+  prepare:["Le tirage au sort de la S9 : envoyer son carnet à la fin de la séance."],
+  tl:[["Accueil, installation",6,"inst"],["Échauffement personnalisé",10,"ech"],["Mes 3 exercices du jour",44,"ex"],["Ajustements, envoi, rangement",10,"bil"]],
   fiches:[
-   fiche("Échauffement personnalisé","Échauffement",10,"Chaque élève évalué s'échauffe pour son projet.","Le partenaire vérifie.",["Échauffement personnalisé (il compte dans l'AFL2)."],null,"Fait.",null,null,null),
+   fiche("Échauffement personnalisé","Échauffement",10,"Échauffement guidé, adapté aux exercices du jour.","Le partenaire vérifie.",["Échauffement personnalisé (il compte dans l'AFL2)."],null,"Fait.",null,null,null),
+   fiche("Mes 3 exercices du jour","Projet",44,"Chacun fait 3 exercices de son projet ; changer d'exercices élargit les possibilités du tirage.","Le partenaire coache (AFL3).",
+    ["Séance préremplie, ressentis après chaque exercice.","Le professeur observe et conseille."],
+    "Paramètres du mobile respectés, ressentis cohérents.","3 exercices faits.",null,null,null),
+   fiche("Ajustements, envoi, rangement","Fin de séance",10,"Carnet envoyé au professeur : il sert au tirage au sort.","Un élève envoie le carnet.",["Ajustements justifiés.","Envoi du carnet (obligatoire pour le tirage)."],null,"Carnet envoyé.",null,null,null)
+  ]},
+ {id:"S9", titre:"Évaluation : 3 exercices tirés au sort", obj:"Réaliser, sous son mobile, les 3 exercices tirés au sort par le professeur parmi ceux faits en S7 et S8 (au moins un du haut et un du bas du corps). AFL1 sur 12 ; AFL2 et AFL3 sur 8.",
+  install:"Le professeur affiche le QR du tirage : chaque binôme le scanne (bouton « QR de la classe »).", bilan:"Ce qui était conforme à ton mobile, ce que tu changerais.",
+  prepare:["La note finale sur 20."],
+  tl:[["Accueil, tirage au sort",6,"inst"],["Échauffement personnalisé",10,"ech"],["Consignes de l'épreuve",3,"ex"],["Épreuve : mes 3 exercices tirés",45,"ex"],["Analyse, envoi, rangement",6,"bil"]],
+  fiches:[
+   fiche("Échauffement personnalisé","Échauffement",10,"Échauffement guidé, adapté aux 3 exercices tirés.","Le partenaire vérifie.",["Échauffement personnalisé."],null,"Fait.",null,null,null),
    fiche("Consignes de l'épreuve","Évaluation",3,"Regroupement.",null,
     ["Réalisation sur 6 points : charges, respiration, posture et trajet, vitesse.","Analyse et régulation sur 6 points : ressentis, cohérence, ajustements (lus dans le carnet).","Le partenaire est évalué dans son rôle AFL3."],
     null,"Chacun connaît les critères.",null,null,"eval"),
-   fiche("Épreuve : projet de la moitié A","Évaluation",45,"La moitié A réalise son projet ; la moitié B est partenaire.","Partenaire : coach (AFL3).",
-    ["Séance préremplie, ressentis après chaque exercice.","Le professeur observe chaque élève sur au moins 2 exercices."],
-    "Paramètres du mobile respectés, ressentis cohérents.","Projet réalisé.",null,null,"eval"),
-   fiche("Analyse, envoi, rangement","Fin de séance",6,"Analyse écrite dans l'appli (2 phrases).","Un élève envoie le carnet.",["Ce qui était conforme, ce que je changerais.","Rangement, envoi."],null,"Analyse écrite, carnet envoyé.",null,null,null)
-  ]},
- {id:"S9", titre:"Évaluation AFL1 · moitié B", obj:"Moitié B : réaliser son projet devant le professeur (AFL1 sur 12). Moitié A : partenaire (AFL3).",
-  install:"Comme en S8, rôles inversés.", bilan:"Ce que ce cycle t'a appris sur ton corps.",
-  prepare:["La note d'AFL1 de la moitié B, la note finale sur 20."],
-  tl:[["Accueil, installation",6,"inst"],["Échauffement personnalisé",10,"ech"],["Consignes de l'épreuve",3,"ex"],["Épreuve : projet de la moitié B",45,"ex"],["Analyse, envoi, rangement",6,"bil"]],
-  fiches:[
-   fiche("Échauffement personnalisé","Échauffement",10,"Chaque élève évalué s'échauffe pour son projet.","Le partenaire vérifie.",["Échauffement personnalisé."],null,"Fait.",null,null,null),
-   fiche("Consignes de l'épreuve","Évaluation",3,"Regroupement.",null,["Mêmes critères qu'en S8."],null,"Chacun connaît les critères.",null,null,"eval"),
-   fiche("Épreuve : projet de la moitié B","Évaluation",45,"La moitié B réalise son projet ; la moitié A est partenaire.","Partenaire : coach (AFL3).",
-    ["Séance préremplie, ressentis après chaque exercice.","Le professeur observe chaque élève sur au moins 2 exercices."],
-    "Paramètres du mobile respectés, ressentis cohérents.","Projet réalisé.",null,null,"eval"),
+   fiche("Épreuve : mes 3 exercices tirés","Évaluation",45,"Chaque binôme réalise les 3 exercices tirés de chacun, avec le chrono binôme.","Partenaire : coach (AFL3).",
+    ["Séance préremplie, ressentis après chaque exercice.","Le professeur observe chaque élève sur ses 3 exercices."],
+    "Paramètres du mobile respectés, ressentis cohérents.","3 exercices réalisés.",null,null,"eval"),
    fiche("Analyse, envoi, rangement","Fin de séance",6,"Analyse écrite dans l'appli.","Un élève envoie le carnet.",["Analyse finale.","Rangement, dernier envoi."],null,"Carnet envoyé.",null,null,null)
   ]}
 ];
