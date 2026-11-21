@@ -7,7 +7,7 @@
    v2.0 (20/11/2026) : menu de 14 ateliers, uniquement avec charges (menu:true) ; les ateliers au poids du corps
    servent à l'échauffement et restent décrits ici pour les anciens carnets. S1 circuit, S2-S3 tests (4 à 5 charges
    max par séance), S4 tonification, S5 volume, S6 puissance (6 ateliers, puissPct) et choix, S7 projet, S8-S9 évaluation. */
-const MUSCU_VERSION = 'v3.0';
+const MUSCU_VERSION = 'v3.1';
 const DUREE_PRATIQUE = 70;
 
 /* ---------- Matériel (salle de judo, tatami) ---------- */
@@ -215,25 +215,29 @@ const OBJ_TESTS = [8, 10];
 /* ---------- Mobiles ---------- */
 const MOBILES = {
  tonif:{nom:"Tonification", theme:"Santé", court:"Tonif.", coul:"#15803d", deg:"linear-gradient(120deg,#3cc176 0%,#1f6e46 45%,#033327 100%)",
-   pct:[50,60], series:[2,4], reps:[15,20], recup:"30 s à 1 min", recupS:45, tempsSerie:45,
+   pct:[50,60], series:[2,4], reps:[15,20], couples:[[50,20],[55,17],[60,15]], recup:"30 s à 1 min", recupS:45, tempsSerie:45,
    exec:"Régulière, respiration continue, pas de vitesse", ressenti:[5,7], sensation:"locale",
    attendu:"Fatigue d'une zone du corps (la région travaillée), sans brûlure forte.",
    ordre:["reps","series","charge"], ordreTxt:"Répétitions, puis séries, puis charge", nbEx:[6,6],
    forme:"En circuit possible : on enchaîne les ateliers, 1 à 2 min entre les tours."},
  volume:{nom:"Volume", theme:"Esthétique", court:"Volume", coul:"#c2410c", deg:"linear-gradient(120deg,#f0a050 0%,#c2410c 45%,#5a1a0c 100%)",
-   pct:[65,80], series:[3,5], reps:[8,12], recup:"1 min 30 à 2 min", recupS:105, tempsSerie:50,
+   pct:[65,75], series:[3,5], reps:[8,12], couples:[[65,12],[70,10],[75,8]], recup:"1 min 30 à 2 min", recupS:105, tempsSerie:50,
    exec:"Lente : 2-3 s à la descente, 1-2 s à la montée ; finir à 1-2 répétitions de l'échec", ressenti:[7,9], sensation:"brulure",
    attendu:"Brûlure, congestion locale : « ça gonfle ».",
    ordre:["series","charge","reps"], ordreTxt:"Séries, puis charge, puis répétitions", nbEx:[4,5],
    forme:"Les séries d'un exercice à la suite, le partenaire travaille pendant la récupération."},
  puiss:{nom:"Puissance", theme:"Sportif", court:"Puiss.", coul:"#1e40af", deg:"linear-gradient(120deg,#6f8fe8 0%,#2a3f9e 45%,#1b1450 100%)",
-   pct:[30,60], series:[3,5], reps:[3,6], recup:"2 à 3 min", recupS:150, tempsSerie:15,
+   pct:[30,60], series:[3,5], reps:[3,6], couples:[[30,6],[45,5],[60,3]], recup:"2 à 3 min", recupS:150, tempsSerie:15,
    exec:"Montée la plus rapide possible, descente contrôlée ; arrêt dès que la vitesse baisse", ressenti:[5,6], sensation:"tension",
    attendu:"Tension générale, sensation de « compacité », sans brûlure.",
    ordre:["charge","series"], ordreTxt:"Charge (tant que la vitesse reste), puis séries", nbEx:[4,5],
    forme:"6 ateliers seulement : développé couché (barre ou haltères sur steps), développé militaire, rowing haltère, squat haltères, hip thrust. Le partenaire dit STOP dès que la vitesse baisse."}
 };
 const MOBILES_ORDRE = ["tonif","volume","puiss"];
+/* v4.1 : couples % × répétitions (vérifiés : table de charge NSCA, Nuzzo et al. 2023, ACSM 2009).
+   Chaque couple laisse la réserve visée par le mobile ; on passe d'un couple à l'autre pour progresser. */
+function coupleIdx(mob, pct){const c = (MOBILES[mob] || {}).couples;if(!c)return -1;let b = 0;c.forEach((x, i) => {if(Math.abs(x[0] - pct) < Math.abs(c[b][0] - pct))b = i});return b}
+const coupleTxt = c => c[0] + ' % × ' + c[1];
 
 /* ---------- Échelle de ressentis (départ commun, d'après Laurent Lecomte et l'échelle de Borg) ----------
    La classe l'enrichit avec ses propres mots (nuage de mots S1-S2), puis chaque élève fait la sienne (S5). */
@@ -351,7 +355,7 @@ const SEANCES = [
     ["3 min : rangement.","2 min : onglet Charges : chacun vérifie ses 8 à 10 charges max ; un atelier manquant se teste en saisie directe en S4.","2 min : résultat du défi par équipes (cumul S2 + S3).","Envoi du carnet."],
     "Rangement complet.","Charges max vérifiées, défi proclamé.",null,null,"test")
   ]},
- {id:"S4", titre:"Mobile Tonification", obj:"Éprouver l'endurance de force : 15 à 20 répétitions à 50-60 %, récupération courte, en circuit ; vérifier que ses sensations correspondent au mobile.",
+ {id:"S4", titre:"Mobile Tonification", obj:"Éprouver l'endurance de force : 20 répétitions à 50 %, 17 à 55 % ou 15 à 60 %, récupération courte, en circuit ; vérifier que ses sensations correspondent au mobile.",
   install:"6 ateliers en circuit (3 du haut du corps, 3 du bas du corps), parmi les ateliers où le binôme a une charge max. Les charges sont calculées par l'appli (50-60 % de la charge max).",
   bilan:"Ta sensation était-elle « fatigue d'une zone » ? Sinon, qu'as-tu changé ?",
   prepare:["Le premier des 3 mobiles éprouvés.","Les ressentis comparés en S6 pour choisir son mobile.","L'évaluation AFL2 et AFL3 : analyse et coaching notés après chaque exercice, de la S4 à la S7."],
@@ -359,7 +363,7 @@ const SEANCES = [
   fiches:[
    fiche("Échauffement","Échauffement",10,ECH_BASE,"Chacun pour soi.",["Échauffement en 3 parties.","P3 : les 6 ateliers du circuit, à vide."],"Pouls pris.","Prêt pour le circuit.",null,null,null),
    fiche("Le mobile Tonification","Consignes",4,"Regroupement. Le professeur montre le tableau du mobile.","Le partenaire vérifie le rythme et la respiration.",
-    ["50-60 % de la charge max, 15 à 20 répétitions, 30 s à 1 min de récupération.","Rythme régulier, respiration continue : pas de vitesse.","Sensation attendue : fatigue d'une zone du corps, sans brûlure forte.","Après chaque exercice, pendant les séries, le partenaire coache (point clé, signes) ; à la fin de l'exercice, chacun note son ressenti, ses répétitions en réserve et ce qu'il fera la prochaine fois.","Dès cette séance, l'analyse et le coaching comptent pour l'AFL2 et l'AFL3 : chacun choisit sa répartition AFL2/AFL3 dans l'appli (rôle AFL3 : coach)."],
+    ["Un couple au choix : 50 % × 20, 55 % × 17 ou 60 % × 15 ; 30 s à 1 min de récupération.","Rythme régulier, respiration continue : pas de vitesse.","Sensation attendue : fatigue d'une zone du corps, sans brûlure forte.","Après chaque exercice, pendant les séries, le partenaire coache (point clé, signes) ; à la fin de l'exercice, chacun note son ressenti, ses répétitions en réserve et ce qu'il fera la prochaine fois.","Dès cette séance, l'analyse et le coaching comptent pour l'AFL2 et l'AFL3 : chacun choisit sa répartition AFL2/AFL3 dans l'appli (rôle AFL3 : coach)."],
     null,"Chacun connaît sa charge sur chaque atelier.",null,null,"mobile:tonif"),
    fiche("Circuit, tour 1","Circuit",12,"6 ateliers, 2 min par atelier pour le binôme : chacun fait sa série (environ 45 s) pendant que l'autre récupère.","Le partenaire compte et regarde le rythme.",
     ["Charge prévue par l'appli : on ne note que si on change.","15 à 20 répétitions régulières.","Ressenti noté après la série.","Au signal : atelier suivant."],
@@ -373,15 +377,15 @@ const SEANCES = [
    fiche("Ressentis, envoi, rangement","Fin de séance",8,"Rangement puis bilan rapide.","Un élève du binôme envoie le carnet.",
     ["L'appli montre la cohérence de tes ressentis avec le mobile.","Rangement.","Envoi du carnet."],null,"Carnet envoyé.",null,null,null)
   ]},
- {id:"S5", titre:"Mobile Volume", obj:"Éprouver le volume : 8 à 12 répétitions à 65-80 %, mouvement lent, 1 min 30 à 2 min de récupération ; reconnaître la brûlure.",
-  install:"Les binômes choisissent 4 exercices : 2 du haut du corps, 2 du bas. Charges à 65-80 % calculées par l'appli.",
+ {id:"S5", titre:"Mobile Volume", obj:"Éprouver le volume : 12 répétitions à 65 %, 10 à 70 % ou 8 à 75 %, mouvement lent, 1 min 30 à 2 min de récupération ; reconnaître la brûlure.",
+  install:"Les binômes choisissent 4 exercices : 2 du haut du corps, 2 du bas. Charges à 65-75 % calculées par l'appli (couples 65 % × 12, 70 % × 10, 75 % × 8).",
   bilan:"As-tu senti « ça brûle, ça gonfle » ? À quelle série ?",
   prepare:["Le deuxième mobile éprouvé.","L'évaluation AFL2 et AFL3 : analyse et coaching notés après chaque exercice, de la S4 à la S7."],
   tl:[["Accueil, installation",8,"inst"],["Échauffement",10,"ech"],["Le mobile Volume",4,"ex"],["Bloc haut du corps",22,"ex"],["Bloc bas du corps",22,"ex"],["Ressentis, envoi, rangement",8,"bil"]],
   fiches:[
    fiche("Échauffement","Échauffement",10,ECH_BASE,"Chacun pour soi.",["Échauffement en 3 parties.","P3 : 1 série légère de 10 sur chaque exercice choisi."],null,"Prêt.",null,null,null),
    fiche("Le mobile Volume","Consignes",4,"Regroupement : démonstration du tempo lent (2-3 s à la descente).","Le partenaire compte le tempo à voix haute.",
-    ["65-80 % de la charge max, 8 à 12 répétitions, 3 à 5 séries.","Descente en 2-3 s, montée en 1-2 s.","Finir à 1-2 répétitions de l'échec : la dernière est dure mais propre.","Sensation attendue : brûlure, « ça gonfle »."],
+    ["Un couple au choix : 65 % × 12, 70 % × 10 ou 75 % × 8 ; 3 à 5 séries.","Descente en 2-3 s, montée en 1-2 s.","Finir à 1-2 répétitions de l'échec : la dernière est dure mais propre.","Sensation attendue : brûlure, « ça gonfle »."],
     null,"Chacun connaît ses charges.",null,null,"mobile:volume"),
    fiche("Bloc haut du corps","Volume",22,"2 exercices du haut du corps, 4 séries chacun. Pendant la récupération de l'un, l'autre fait sa série.","Le partenaire compte le tempo et coche les signes.",
     ["Séance préremplie dans l'appli : on ne note que les différences.","Ressenti après chaque exercice.","Brûlure trop tôt ou pas du tout : l'appli propose un ajustement."],
@@ -545,7 +549,7 @@ const POINT_CLE = {dc:"Fesses collées au banc, barre sur la poitrine", dch:"Cou
 /* répétitions en réserve (RIR) : « Combien aurais-tu pu en faire encore, propres ? » */
 const RIR_Q = [["0","0"],["12","1 ou 2"],["34","3 ou 4"],["5","5 et +"]];
 const RIR_CIBLE = {tonif:[2,2], volume:[1,1], puiss:[2,3]};   // index dans RIR_Q
-const NEXT_Q = [["garde","Je garde",0],["serie","+ 1 série",1],["reps","+ des répétitions",1],["chargeP","+ de charge",1],["chargeM","− de charge",-1],["posture","Je corrige ma posture",0]];
+const NEXT_Q = [["garde","Je garde",0],["serie","+ 1 série",1],["reps","+ des répétitions",1],["chargeP","Couple suivant (+ lourd)",1],["chargeM","Couple précédent (+ léger)",-1],["posture","Je corrige ma posture",0]];
 const NIV_COACH_M = {S4:1, S5:1, S6:2, S7:3, S8:3, S9:3};
 const OBJ_M = [["charge","Charge (kg)"],["reps","Répétitions"],["series","Séries"]];
 /* sens de la régulation : +1 trop facile, −1 trop dur, 0 juste. Douleur et vitesse d'abord, puis la réserve, sinon le ressenti. */
@@ -577,7 +581,7 @@ const escM = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp
 const MOB_IMG = {tonif:'img/mobiles/tonif.jpg', volume:'img/mobiles/volume.jpg', puiss:'img/mobiles/puiss.jpg'};
 function mobileHTML(k){
   const m = MOBILES[k]; if(!m) return '';
-  const l = [["% de la charge max", `${m.pct[0]}-${m.pct[1]} %`],["Séries", `${m.series[0]}-${m.series[1]}`],["Répétitions", `${m.reps[0]}-${m.reps[1]}`],["Récupération", m.recup],["Exécution", m.exec],["Ressenti visé", `${m.ressenti[0]} à ${m.ressenti[1]} sur 10`],["Sensation attendue", m.attendu],["Progression", m.ordreTxt]];
+  const l = [["% de la charge max", `${m.pct[0]}-${m.pct[1]} %`],["Séries", `${m.series[0]}-${m.series[1]}`],["Répétitions", `${m.reps[0]}-${m.reps[1]}`],["Couples conseillés", m.couples.map((c, i) => (i + 1) + ") " + coupleTxt(c)).join("  ·  ")],["Récupération", m.recup],["Exécution", m.exec],["Ressenti visé", `${m.ressenti[0]} à ${m.ressenti[1]} sur 10`],["Sensation attendue", m.attendu],["Progression", m.ordreTxt]];
   return `<div class="mob" style="--mc:${m.coul};--mg:${m.deg || m.coul}"><div class="mob-tete"><img src="${MOB_IMG[k]}" alt="Affiche du mobile ${escM(m.nom)}" loading="lazy"><div><h3>${escM(m.nom)}</h3><small>${escM(m.theme)}</small><p>${escM(m.pct[0])}-${escM(m.pct[1])} % · ${escM(m.reps[0])}-${escM(m.reps[1])} rép. · récup ${escM(m.recup)}</p></div></div><table>${l.map(([a, b]) => `<tr><th>${escM(a)}</th><td>${escM(b)}</td></tr>`).join('')}</table><p class="cap">${escM(m.forme)}</p></div>`;
 }
 function echelleHTML(){ return `<div class="ech">${ECHELLE.map(([n, t, d, c]) => `<div style="background:${c}"><b>${n}</b><span><b>${escM(t)}</b> ${escM(d)}</span></div>`).join('')}</div>`; }
