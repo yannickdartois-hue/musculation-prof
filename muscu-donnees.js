@@ -7,7 +7,7 @@
    v2.0 (20/11/2026) : menu de 14 ateliers, uniquement avec charges (menu:true) ; les ateliers au poids du corps
    servent à l'échauffement et restent décrits ici pour les anciens carnets. S1 circuit, S2-S3 tests (4 à 5 charges
    max par séance), S4 tonification, S5 volume, S6 puissance (6 ateliers, puissPct) et choix, S7 projet, S8-S9 évaluation. */
-const MUSCU_VERSION = 'v2.7';
+const MUSCU_VERSION = 'v2.8';
 const DUREE_PRATIQUE = 70;
 
 /* ---------- Matériel (salle de judo, tatami) ---------- */
@@ -36,9 +36,9 @@ const ATELIERS = [
   crit:["Allongé, pieds au sol, fesses et omoplates collées au banc.","Mains un peu plus écartées que les épaules.","La barre descend sur la poitrine, au niveau des tétons, coudes à 45° du corps.","Pousser à la verticale sans décoller les fesses."],
   resp:"Inspirer en descendant, souffler en poussant.", secu:"Toujours un pareur debout derrière la tête, mains prêtes sous la barre. 2e poste : au sol sur un banc bas, ou développé couché haltères.",
   moins:"Développé couché haltères, ou pompes sur les genoux.", plus:"Descente en 3 s.", video:"P4_DÉVELOPPÉ-COUCHÉ HALTÈRES"},
- {id:"dch", n:0, nom:"Développé couché haltères au sol", zone:"haut", groupe:"Pectoraux", muscles:"Grands pectoraux, triceps", support:"hreg", type:"charge", menu:true, puissance:true, puissPct:[30,45], depart:6,
-  crit:["Allongé au sol sur le tatami, genoux fléchis.","Haltères au-dessus des épaules, coudes à 45°.","Descendre jusqu'à ce que les coudes touchent le tatami, puis pousser à la verticale."],
-  resp:"Inspirer en descendant, souffler en poussant.", secu:"Poser les haltères sur les cuisses avant de s'asseoir ; ne jamais les lâcher au-dessus du visage.", moins:"Haltères plus légers.", plus:"Descente en 3 s.", video:"P4_DÉVELOPPÉ-COUCHÉ HALTÈRES"},
+ {id:"dch", n:0, nom:"Développé couché haltères sur steps", zone:"haut", groupe:"Pectoraux", muscles:"Grands pectoraux, triceps", support:"hreg", type:"charge", menu:true, puissance:true, puissPct:[30,45], depart:6,
+  crit:["Allongé sur les steps recouverts du tapis en mousse, genoux fléchis, pieds à plat.","Haltères au-dessus des épaules, coudes à 45°.","Descendre jusqu'à ce que les coudes arrivent à hauteur du tapis, pas plus bas, puis pousser à la verticale."],
+  resp:"Inspirer en descendant, souffler en poussant.", secu:"Poser les haltères sur les cuisses avant de s'asseoir ; ne jamais les lâcher au-dessus du visage. Steps calés, tapis bien centré.", moins:"Haltères plus légers.", plus:"Descente en 3 s.", video:"P4_DÉVELOPPÉ-COUCHÉ HALTÈRES"},
  {id:"pompes", n:0, nom:"Pompes", zone:"haut", groupe:"Pectoraux", muscles:"Grands pectoraux, triceps, gainage", support:"pdc", type:"variante",
   niveaux:["Pompes contre le mur","Pompes sur les genoux","Pompes","Pompes pieds surélevés sur le banc"],
   crit:["Mains sous les épaules, corps aligné de la tête aux pieds (ou aux genoux).","La poitrine descend à un poing du sol.","Le bassin ne s'affaisse pas."],
@@ -102,9 +102,9 @@ const ATELIERS = [
   niveaux:["Sur le genou","Sur le pied","Jambe du dessus levée"],
   crit:["Coude sous l'épaule, corps aligné de profil.","Bassin haut, il ne s'affaisse pas."], resp:"Respirer calmement.", secu:"Changer de côté à chaque série."},
  /* v2.0 : nouveaux ateliers du menu (dessins : schémas provisoires en SVG) */
- {id:"pullover", n:0, nom:"Pull-over haltère sur steps", zone:"haut", groupe:"Dos", muscles:"Grand dorsal, grand rond, grand pectoral, triceps", support:"hreg", type:"charge", menu:true, depart:6,
-  crit:["Allongé sur deux steps recouverts du tapis en mousse, tête au bord, genoux fléchis, pieds à plat, bas du dos plaqué ; un haltère tenu à deux mains sous le disque du haut, au-dessus de la poitrine.","Coudes légèrement fléchis et fixes : descendre l'haltère derrière la tête en arc de cercle, jusqu'aux bras dans le prolongement du corps, pas plus bas.","Ramener l'haltère au-dessus de la poitrine en tirant avec les bras, sans décoller le bas du dos."],
-  resp:"Inspirer en descendant, souffler en remontant.", secu:"Vérifier le serrage des disques avant chaque série. Ne pas descendre plus bas que les bras dans le prolongement du corps (épaules). Rien derrière la tête : l'haltère ne doit pas toucher le step.", moins:"Haltère plus léger, amplitude réduite.", plus:"Descente en 3 s."},
+ {id:"pullover", n:0, nom:"Pull-over barre triceps sur steps", zone:"haut", groupe:"Dos", muscles:"Grand dorsal, grand rond, grand pectoral, triceps", support:"tri", type:"charge", menu:true, depart:8,
+  crit:["Allongé sur deux steps recouverts du tapis en mousse, tête au bord, genoux fléchis, pieds à plat, bas du dos plaqué ; barre triceps tenue à deux mains par les poignées parallèles, au-dessus de la poitrine.","Coudes légèrement fléchis et fixes : descendre la barre derrière la tête en arc de cercle, jusqu'aux bras dans le prolongement du corps, pas plus bas.","Ramener la barre au-dessus de la poitrine en tirant avec les bras, sans décoller le bas du dos."],
+  resp:"Inspirer en descendant, souffler en remontant.", secu:"Vérifier le serrage des disques avant chaque série. Ne pas descendre plus bas que les bras dans le prolongement du corps (épaules). Rien derrière la tête : la barre ne doit pas toucher le step. Barre triceps partagée avec l'extension triceps : 1 binôme par barre.", moins:"Barre à vide, amplitude réduite.", plus:"Descente en 3 s."},
  {id:"oiseau", n:0, nom:"Oiseau haltères", zone:"haut", groupe:"Épaules", muscles:"Deltoïdes postérieurs, rhomboïdes, trapèzes", support:"hreg", type:"charge", menu:true, depart:3,
   crit:["Buste penché en avant, dos plat, genoux fléchis, haltères sous les épaules.","Ouvrir les bras sur le côté, coudes légèrement fléchis, jusqu'à l'horizontale.","Redescendre en contrôlant."],
   resp:"Souffler en ouvrant.", secu:"Charges très légères ; dos plat (ou assis, buste posé sur les cuisses).", moins:"Assis, buste sur les cuisses.", plus:"Pause de 1 s en haut."},
@@ -137,10 +137,10 @@ const ATELIERS = [
 const atelier = id => ATELIERS.find(a => a.id === id);
 /* Illustrations des ateliers. v2.6 (21/11/2026) : dessins tirés des fiches d'exercice d'Y. Dartois (générées par IA) ;
    restent © Espace-musculation.com en attendant leur fiche : dch, oiseau, mollets, montee, elev, twist, ecarte. */
-const IMAGES_AT = ["curlb", "mollets", "montee", "crunch", "squat", "extri", "rowb", "tirage", "elev", "twist", "dc", "fentes", "rowh", "curlh", "gainage", "pompes", "gainlat", "dips", "dch", "ecarte", "dm", "oiseau", "squath", "sdtj", "hip", "sbox", "sjump"];
-const IMAGES_SVG = ["pullover"];   // dessin libre de droit (Claude, 20/11/2026), en attendant la fiche
+const IMAGES_AT = ["curlb", "mollets", "montee", "crunch", "squat", "extri", "rowb", "tirage", "elev", "twist", "dc", "fentes", "rowh", "curlh", "gainage", "pompes", "gainlat", "dips", "dch", "ecarte", "dm", "oiseau", "squath", "sdtj", "hip", "sbox", "sjump", "pullover"];
+const IMAGES_SVG = [];   // dessin libre de droit (Claude, 20/11/2026), en attendant la fiche
 /* Fiches d'exercice complètes (onglet « Fiches ») */
-const FICHES = {dc:"Développé couché barre", dm:"Développé militaire assis", rowh:"Rowing haltère un bras", rowb:"Rowing barre buste penché", tirage:"Tirage menton barre EZ", curlb:"Curl barre", extri:"Extension triceps allongé", squath:"Squat goblet", fentes:"Fentes avant", sdtj:"Soulevé de terre jambes semi-tendues", hip:"Hip thrust au sol", sbox:"Saut sur box", curlh:"Variante : curl alterné avec rotation"};
+const FICHES = {dc:"Développé couché barre", dm:"Développé militaire assis", rowh:"Rowing haltère un bras", rowb:"Rowing barre buste penché", tirage:"Tirage menton barre EZ", curlb:"Curl barre", extri:"Extension triceps allongé", squath:"Squat goblet", fentes:"Fentes avant", sdtj:"Soulevé de terre jambes semi-tendues", hip:"Hip thrust au sol", sbox:"Saut sur box", dch:"Développé couché haltères sur steps", pullover:"Pull-over barre triceps sur steps", curlh:"Variante : curl alterné avec rotation"};
 const ficheImg = id => FICHES[id] ? 'img/fiches/' + id + '.jpg' : null;
 /* Répertoire illustré de l'échauffement (onglet « Fiches ») : [id, nom, consigne] ; image img/echauf/<id>.jpg, ou img/ateliers/<id>.jpg pour les ateliers */
 const ECHAUF_LIB = [
@@ -217,7 +217,7 @@ const MOBILES = {
    exec:"Montée la plus rapide possible, descente contrôlée ; arrêt dès que la vitesse baisse", ressenti:[5,6], sensation:"tension",
    attendu:"Tension générale, sensation de « compacité », sans brûlure.",
    ordre:["charge","series"], ordreTxt:"Charge (tant que la vitesse reste), puis séries", nbEx:[4,5],
-   forme:"6 ateliers seulement : développé couché (barre ou haltères au sol), développé militaire, rowing haltère, squat haltères, hip thrust. Le partenaire dit STOP dès que la vitesse baisse."}
+   forme:"6 ateliers seulement : développé couché (barre ou haltères sur steps), développé militaire, rowing haltère, squat haltères, hip thrust. Le partenaire dit STOP dès que la vitesse baisse."}
 };
 const MOBILES_ORDRE = ["tonif","volume","puiss"];
 
@@ -378,7 +378,7 @@ const SEANCES = [
    fiche("Ressentis, envoi, rangement","Fin de séance",8,"Rangement puis bilan.","Un élève envoie le carnet.",["Cohérence des ressentis avec le mobile.","Rangement, envoi."],null,"Carnet envoyé.",null,null,null)
   ]},
  {id:"S6", titre:"Mobile Puissance, choisir son mobile", obj:"Éprouver la puissance : 3 à 6 répétitions à 30-60 %, le plus vite possible, récupération complète ; comparer les 3 mobiles, choisir le sien et construire son échelle personnelle.",
-  install:"Les ateliers de puissance : développé couché (barre ou haltères au sol), développé militaire, rowing haltère, squat haltères, saut sur box (2 box en bois sur le sol dur, arête avant protégée par de la mousse, côté 40 ou 50 cm), hip thrust. Chaque binôme en fait 4, dont au moins un du bas du corps.",
+  install:"Les ateliers de puissance : développé couché (barre ou haltères sur steps), développé militaire, rowing haltère, squat haltères, saut sur box (2 box en bois sur le sol dur, arête avant protégée par de la mousse, côté 40 ou 50 cm), hip thrust. Chaque binôme en fait 4, dont au moins un du bas du corps.",
   bilan:"Quel mobile choisis-tu, et pourquoi ? Quelle sensation te le dit ?",
   prepare:["Le choix du mobile pour le projet (S7 à S9).","L'échelle de ressentis personnelle.","L'évaluation AFL2 et AFL3 : analyse et coaching notés après chaque exercice, de la S4 à la S7."],
   tl:[["Accueil, installation",8,"inst"],["Échauffement progressif",12,"ech"],["Le mobile Puissance",3,"ex"],["Bas du corps : vitesse maximale",15,"ex"],["Haut du corps : vitesse maximale",17,"ex"],["Comparer, choisir, mon échelle",10,"ex"],["Envoi, rangement",5,"bil"]],
@@ -390,7 +390,7 @@ const SEANCES = [
    fiche("Bas du corps : vitesse maximale","Puissance",15,"Squat haltères (remontée explosive jusqu'à la pointe des pieds, sans quitter le sol), saut sur box juste après (3 à 5 sauts) ou hip thrust (poussée explosive des hanches, 1 s en haut). 4 séries de 4 à 6.","Le partenaire juge la vitesse et dit STOP dès qu'elle baisse.",
     ["Charge à 40-60 % (l'appli la calcule).","Le plus vite possible à la montée, descente contrôlée.","Vitesse qui baisse : la série s'arrête, même avant 4 répétitions.","Saut sur box : 3 à 5 sauts, réception silencieuse, redescente en marchant ; box à 40 cm puis 50 cm, jamais 60."],
     "Vitesse maximale à chaque répétition.","1 à 2 exercices, ressentis notés.","Charge à 40 %.","Charge à 60 %.","mobile:puiss"),
-   fiche("Haut du corps : vitesse maximale","Puissance",17,"Développé couché (barre avec pareur, ou haltères au sol), développé militaire assis, rowing haltère. 4 séries de 4 à 6.","Le partenaire juge la vitesse ; il pare au développé couché barre.",
+   fiche("Haut du corps : vitesse maximale","Puissance",17,"Développé couché (barre avec pareur, ou haltères sur steps), développé militaire assis, rowing haltère. 4 séries de 4 à 6.","Le partenaire juge la vitesse ; il pare au développé couché barre.",
     ["Pousser ou tirer le plus vite possible, redescendre en contrôlant.","Vitesse qui baisse : la série s'arrête.","Ressenti après chaque exercice : tension générale ?"],
     "Vitesse maximale à chaque répétition.","2 à 3 exercices, ressentis notés.","Charge au bas de la fourchette.","Charge au haut de la fourchette.","mobile:puiss"),
    fiche("Comparer, choisir, mon échelle","Choix",10,"Chacun avec son téléphone, assis sur le tatami.","Le partenaire aide à relire les ressentis.",
