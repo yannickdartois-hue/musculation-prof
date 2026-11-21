@@ -190,6 +190,20 @@ const ECHAUF_LIB = [
   ["taps","Planche, épaules touchées","En planche, une main touche l'épaule opposée, le bassin ne bouge pas."],
   ["rtwist","Russian twist sans charge","Assis, buste penché en arrière dos droit : tournez d'un côté puis de l'autre."]]}
 ];
+/* listes d'exercices par défaut des séances de mobiles (déplacées ici en v3.0 pour l'outil prof) */
+const LISTES_DEFAUT = {S4:['dch','rowh','dm','squath','fentes','hip'], S5:['dch','rowb','squath','sdtj'], S6:['dch','rowh','squath','hip']};
+/* v3.0 : bilan de l'échauffement guidé (parties faites), partagé par l'appli élève et l'outil prof */
+const ECH_PARTS = {P1:[['corde','jjack','genoux','talons','chasses','squatjack','burpee','fente_m','chenille','ours','crabe'], 2],
+ P2:[['mob_cheville','mob_genou','mob_hanche','mob_buste','mob_epaule','mob_poignet'], 6],
+ P3:[['act_scap','act_y','act_pont','act_gm','act_fente','act_squat'], 3],
+ P4:[['sjump','squat','pompes_mur','pompes_step','pompes_genoux','pompes','dips','gainage','gainlat','crunch','crunch_inv','deadbug','birddog','mclimb','taps','rtwist'], 3]};
+function echBilan(wc, n, jour){
+  wc = wc || [];const h = k => wc.includes(k);let f = 0, t = 0;
+  Object.entries(ECH_PARTS).forEach(([k, [l, m]]) => {t++;if(h(k) || l.filter(h).length >= m)f++});
+  if(n >= 4 && jour && jour.length){t++;if(h('P5') || jour.every(at => h('sp:' + at)))f++}
+  else if(n === 2 || n === 3){t++;if(h('P5'))f++}
+  return [f, t];
+}
 const imgEchauf = id => (IMAGES_AT.includes(id) ? 'img/ateliers/' : 'img/echauf/') + id + '.jpg';
 const imgAtelier = id => IMAGES_AT.includes(id) ? 'img/ateliers/' + id + '.jpg' : IMAGES_SVG.includes(id) ? 'img/ateliers/' + id + '.svg' : null;
 /* v2.0 : le menu = 14 ateliers avec charges. Circuit de S1 sur les 14 (4 min par atelier), en alternant haut et bas du corps. */
