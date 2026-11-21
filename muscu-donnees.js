@@ -7,7 +7,7 @@
    v2.0 (20/11/2026) : menu de 14 ateliers, uniquement avec charges (menu:true) ; les ateliers au poids du corps
    servent à l'échauffement et restent décrits ici pour les anciens carnets. S1 circuit, S2-S3 tests (4 à 5 charges
    max par séance), S4 tonification, S5 volume, S6 puissance (6 ateliers, puissPct) et choix, S7 projet, S8-S9 évaluation. */
-const MUSCU_VERSION = 'v2.4';
+const MUSCU_VERSION = 'v2.5';
 const DUREE_PRATIQUE = 70;
 
 /* ---------- Matériel (salle de judo, tatami) ---------- */
@@ -101,18 +101,18 @@ const ATELIERS = [
   niveaux:["Sur le genou","Sur le pied","Jambe du dessus levée"],
   crit:["Coude sous l'épaule, corps aligné de profil.","Bassin haut, il ne s'affaisse pas."], resp:"Respirer calmement.", secu:"Changer de côté à chaque série."},
  /* v2.0 : nouveaux ateliers du menu (dessins : schémas provisoires en SVG) */
- {id:"pullover", n:0, nom:"Pull-over haltère au sol", zone:"haut", groupe:"Dos", muscles:"Grand dorsal, grand pectoral, triceps", support:"hreg", type:"charge", menu:true, depart:6,
-  crit:["Allongé sur le tatami, genoux fléchis, un haltère tenu à deux mains au-dessus de la poitrine.","Coudes légèrement fléchis et fixes : descendre l'haltère derrière la tête jusqu'à ce qu'il frôle le sol.","Ramener l'haltère au-dessus de la poitrine en tirant avec les bras."],
-  resp:"Inspirer en descendant, souffler en remontant.", secu:"Au sol : le tatami limite l'amplitude et protège l'épaule. Disques bien serrés.", moins:"Haltère plus léger.", plus:"Descente en 3 s."},
+ {id:"pullover", n:0, nom:"Pull-over haltère sur steps", zone:"haut", groupe:"Dos", muscles:"Grand dorsal, grand rond, grand pectoral, triceps", support:"hreg", type:"charge", menu:true, depart:6,
+  crit:["Allongé sur deux steps recouverts du tapis en mousse, tête au bord, genoux fléchis, pieds à plat, bas du dos plaqué ; un haltère tenu à deux mains sous le disque du haut, au-dessus de la poitrine.","Coudes légèrement fléchis et fixes : descendre l'haltère derrière la tête en arc de cercle, jusqu'aux bras dans le prolongement du corps, pas plus bas.","Ramener l'haltère au-dessus de la poitrine en tirant avec les bras, sans décoller le bas du dos."],
+  resp:"Inspirer en descendant, souffler en remontant.", secu:"Vérifier le serrage des disques avant chaque série. Ne pas descendre plus bas que les bras dans le prolongement du corps (épaules). Rien derrière la tête : l'haltère ne doit pas toucher le step.", moins:"Haltère plus léger, amplitude réduite.", plus:"Descente en 3 s."},
  {id:"oiseau", n:0, nom:"Oiseau haltères", zone:"haut", groupe:"Épaules", muscles:"Deltoïdes postérieurs, rhomboïdes, trapèzes", support:"hreg", type:"charge", menu:true, depart:3,
   crit:["Buste penché en avant, dos plat, genoux fléchis, haltères sous les épaules.","Ouvrir les bras sur le côté, coudes légèrement fléchis, jusqu'à l'horizontale.","Redescendre en contrôlant."],
   resp:"Souffler en ouvrant.", secu:"Charges très légères ; dos plat (ou assis, buste posé sur les cuisses).", moins:"Assis, buste sur les cuisses.", plus:"Pause de 1 s en haut."},
  {id:"squath", n:0, nom:"Squat haltères (goblet)", zone:"bas", groupe:"Cuisses et fessiers", muscles:"Quadriceps, fessiers", support:"hreg", type:"charge", menu:true, puissance:true, puissPct:[40,60], depart:8,
   crit:["Pieds largeur d'épaules, un haltère tenu vertical contre la poitrine (ou deux haltères le long du corps).","Descendre jusqu'aux cuisses parallèles au sol, dos droit, talons au sol.","Genoux dans l'axe des pieds ; en Puissance, remonter vite jusqu'à la pointe des pieds sans quitter le sol."],
   resp:"Inspirer en descendant, souffler en remontant.", secu:"Pas de barre sur les épaules : il n'y a pas de cage à squat. Talons qui décollent : cale sous les talons.", moins:"Haltère plus léger.", plus:"Pause de 2 s en bas."},
- {id:"sdtj", n:0, nom:"Soulevé de terre jambes semi-tendues", zone:"bas", groupe:"Ischio-jambiers", muscles:"Ischio-jambiers, fessiers, lombaires", support:"hreg", type:"charge", menu:true, depart:6,
-  crit:["Debout, un haltère dans chaque main devant les cuisses, genoux légèrement fléchis et fixes.","Pencher le buste en poussant les fesses vers l'arrière, dos plat, haltères le long des jambes.","Descendre jusqu'à mi-tibias, ou dès que le dos veut s'arrondir, puis remonter en serrant les fesses."],
-  resp:"Inspirer en descendant, souffler en remontant.", secu:"Dos plat obligatoire : dos rond = arrêt de la série. Démonstration en S1, charges modérées.", moins:"Haltères plus légers, descente jusqu'aux genoux.", plus:"Descente en 3 s."},
+ {id:"sdtj", n:0, nom:"Soulevé de terre jambes semi-tendues", zone:"bas", groupe:"Ischio-jambiers", muscles:"Ischio-jambiers, fessiers, lombaires", support:"b120", type:"charge", menu:true, depart:16,
+  crit:["Barre posée sur deux piles de steps à hauteur des genoux : la prendre debout, mains largeur d'épaules, paumes vers soi, genoux légèrement fléchis et fixes.","Pencher le buste en poussant les fesses vers l'arrière, dos plat, la barre glisse le long des cuisses.","Descendre jusqu'à mi-tibias, ou dès que le dos veut s'arrondir, puis remonter en serrant les fesses."],
+  resp:"Inspirer en descendant, souffler en remontant.", secu:"Dos plat obligatoire : dos rond = arrêt de la série. Barre prise et reposée sur les steps, jamais au sol. Démonstration en S1, charges modérées.", moins:"Deux haltères le long des jambes, ou descente jusqu'aux genoux.", plus:"Descente en 3 s."},
  {id:"hip", n:0, nom:"Hip thrust au sol (pont fessier) haltère", zone:"bas", groupe:"Fessiers", muscles:"Grands fessiers, ischio-jambiers", support:"hreg", type:"charge", menu:true, puissance:true, puissPct:[40,60], depart:8,
   crit:["Allongé sur le dos sur un tapis, pieds à plat près des fesses, écartés largeur de hanches.","Un haltère posé en travers du bassin sur une mousse ou un tapis plié, tenu à deux mains.","Monter le bassin jusqu'à l'alignement épaules-hanches-genoux, serrer les fesses 1 s, redescendre."],
   resp:"Souffler en montant.", secu:"Haltère toujours calé sur la mousse ; pas de cambrure en haut (regard vers les genoux).", moins:"Haltère plus léger.", plus:"Pause de 2 s en haut."},
@@ -213,7 +213,7 @@ const fiche = (titre, cat, duree, dispo, roles, deroul, crit, reussite, moins, p
 
 const SEANCES = [
  {id:"S1", titre:"Se situer, découvrir les ateliers", obj:"Connaître les règles de sécurité et les rôles du binôme ; découvrir les 14 ateliers du cycle (tous avec charges) ; commencer à mettre des mots sur ses ressentis.",
-  install:"Binômes formés pour tout le cycle. Les 14 ateliers du circuit sont installés en boucle sur le tatami, numérotés (2 bancs, steps empilés recouverts d'un tapis pour le rowing haltère, tapis et mousse pour le hip thrust au sol). Les élèves ouvrent l'appli élève et créent leur binôme.",
+  install:"Binômes formés pour tout le cycle. Les 14 ateliers du circuit sont installés en boucle sur le tatami, numérotés (2 bancs, steps empilés recouverts d'un tapis pour le rowing haltère et le pull-over, tapis et mousse pour le hip thrust au sol, deux piles de steps à hauteur des genoux pour poser la barre du soulevé de terre). Les élèves ouvrent l'appli élève et créent leur binôme.",
   bilan:"Quel mot as-tu choisi en fin d'échauffement ? Quel atelier t'a le plus fait travailler ?",
   prepare:["Le questionnaire « Je me situe » qui suggère un mobile.","Les premiers mots du nuage de la classe.","Le test 10 RM de la séance 2."],
   tl:[["Accueil, binômes, appli",10,"inst"],["Échauffement + premiers mots",8,"ech"],["Règles et rôles du binôme",3,"ex"],["Circuit : ateliers 1 à 7",28,"ex"],["Circuit : ateliers 8 à 14",28,"ex"],["Je me situe, envoi, rangement",5,"bil"]],
@@ -340,7 +340,7 @@ const SEANCES = [
    fiche("Envoi, rangement","Fin de séance",5,"Rangement puis envoi.","Un élève envoie le carnet.",["Rangement.","Envoi du carnet.","Bilan : quel mobile, pourquoi ?"],null,"Carnet envoyé.",null,null,null)
   ]},
  {id:"S7", titre:"Mon projet", obj:"Construire un projet cohérent avec son mobile (haut et bas du corps, 4 à 6 exercices) et le réaliser ; ajuster pour l'évaluation (l'AFL2 et l'AFL3 sont observées depuis la S4).",
-  install:"Les 14 ateliers sont accessibles. Banc de développé couché : 1 binôme ; barres triceps : 2 ; steps recouverts du tapis pour le rowing haltère ; tapis et mousse pour le hip thrust au sol.",
+  install:"Les 14 ateliers sont accessibles. Banc de développé couché : 1 binôme ; barres triceps : 2 ; steps recouverts du tapis pour le rowing haltère et le pull-over ; tapis et mousse pour le hip thrust au sol ; deux piles de steps à hauteur des genoux pour la barre du soulevé de terre.",
   bilan:"Ton projet tient-il dans la séance ? Qu'as-tu ajusté ?",
   prepare:["Le projet réalisé en S8 et S9.","L'évaluation AFL2 et AFL3."],
   tl:[["Accueil, installation",8,"inst"],["Échauffement personnalisé",10,"ech"],["Construire mon projet",12,"ex"],["Réaliser mon projet",38,"ex"],["Ajustements, envoi, rangement",8,"bil"]],
@@ -467,8 +467,8 @@ function dureeProjet(mob, exos){ return Math.round(exos.reduce((a, e) => a + dur
 const POINT_CLE = {dc:"Fesses collées au banc, barre sur la poitrine", dch:"Coudes à 45°, ni collés ni écartés", rowh:"Dos plat, le coude monte le long du corps",
  rowb:"Dos plat, barre tirée vers le nombril", tirage:"Coudes pas plus haut que les épaules, poignets droits", dm:"Dos collé au dossier, pas de cambrure",
  curlb:"Coudes fixes, pas d'élan du buste", extri:"Coudes fixes, pointés vers le plafond", fentes:"Genou avant au-dessus de la cheville, buste droit",
- pullover:"Bras presque tendus, bassin au sol", oiseau:"Dos plat, les bras montent sur le côté", squath:"Dos droit, genoux dans l'axe des pieds",
- sdtj:"Dos plat, les haltères frôlent les cuisses", hip:"Bassin aligné en haut, haltère calé sur la mousse"};
+ pullover:"Bras presque tendus, bas du dos plaqué", oiseau:"Dos plat, les bras montent sur le côté", squath:"Dos droit, genoux dans l'axe des pieds",
+ sdtj:"Dos plat, la barre frôle les cuisses", hip:"Bassin aligné en haut, haltère calé sur la mousse"};
 /* répétitions en réserve (RIR) : « Combien aurais-tu pu en faire encore, propres ? » */
 const RIR_Q = [["0","0"],["12","1 ou 2"],["34","3 ou 4"],["5","5 et +"]];
 const RIR_CIBLE = {tonif:[2,2], volume:[1,1], puiss:[2,3]};   // index dans RIR_Q
