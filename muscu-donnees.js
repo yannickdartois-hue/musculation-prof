@@ -214,19 +214,19 @@ const OBJ_TESTS = [8, 10];
 
 /* ---------- Mobiles ---------- */
 const MOBILES = {
- tonif:{nom:"Tonification", theme:"Santé", court:"Tonif.", coul:"#0e7490",
+ tonif:{nom:"Tonification", theme:"Santé", court:"Tonif.", coul:"#15803d", deg:"linear-gradient(120deg,#3cc176 0%,#1f6e46 45%,#033327 100%)",
    pct:[50,60], series:[2,4], reps:[15,20], recup:"30 s à 1 min", recupS:45, tempsSerie:45,
    exec:"Régulière, respiration continue, pas de vitesse", ressenti:[5,7], sensation:"locale",
    attendu:"Fatigue d'une zone du corps (la région travaillée), sans brûlure forte.",
    ordre:["reps","series","charge"], ordreTxt:"Répétitions, puis séries, puis charge", nbEx:[6,6],
    forme:"En circuit possible : on enchaîne les ateliers, 1 à 2 min entre les tours."},
- volume:{nom:"Volume", theme:"Esthétique", court:"Volume", coul:"#7c3aed",
+ volume:{nom:"Volume", theme:"Esthétique", court:"Volume", coul:"#c2410c", deg:"linear-gradient(120deg,#f0a050 0%,#c2410c 45%,#5a1a0c 100%)",
    pct:[65,80], series:[3,5], reps:[8,12], recup:"1 min 30 à 2 min", recupS:105, tempsSerie:50,
    exec:"Lente : 2-3 s à la descente, 1-2 s à la montée ; finir à 1-2 répétitions de l'échec", ressenti:[7,9], sensation:"brulure",
    attendu:"Brûlure, congestion locale : « ça gonfle ».",
    ordre:["series","charge","reps"], ordreTxt:"Séries, puis charge, puis répétitions", nbEx:[4,5],
    forme:"Les séries d'un exercice à la suite, le partenaire travaille pendant la récupération."},
- puiss:{nom:"Puissance", theme:"Sportif", court:"Puiss.", coul:"#b45309",
+ puiss:{nom:"Puissance", theme:"Sportif", court:"Puiss.", coul:"#1e40af", deg:"linear-gradient(120deg,#6f8fe8 0%,#2a3f9e 45%,#1b1450 100%)",
    pct:[30,60], series:[3,5], reps:[3,6], recup:"2 à 3 min", recupS:150, tempsSerie:15,
    exec:"Montée la plus rapide possible, descente contrôlée ; arrêt dès que la vitesse baisse", ressenti:[5,6], sensation:"tension",
    attendu:"Tension générale, sensation de « compacité », sans brûlure.",
@@ -578,7 +578,7 @@ const MOB_IMG = {tonif:'img/mobiles/tonif.jpg', volume:'img/mobiles/volume.jpg',
 function mobileHTML(k){
   const m = MOBILES[k]; if(!m) return '';
   const l = [["% de la charge max", `${m.pct[0]}-${m.pct[1]} %`],["Séries", `${m.series[0]}-${m.series[1]}`],["Répétitions", `${m.reps[0]}-${m.reps[1]}`],["Récupération", m.recup],["Exécution", m.exec],["Ressenti visé", `${m.ressenti[0]} à ${m.ressenti[1]} sur 10`],["Sensation attendue", m.attendu],["Progression", m.ordreTxt]];
-  return `<div class="mob" style="--mc:${m.coul}"><div class="mob-tete"><img src="${MOB_IMG[k]}" alt="Affiche du mobile ${escM(m.nom)}" loading="lazy"><div><h3>${escM(m.nom)}</h3><small>${escM(m.theme)}</small><p>${escM(m.pct[0])}-${escM(m.pct[1])} % · ${escM(m.reps[0])}-${escM(m.reps[1])} rép. · récup ${escM(m.recup)}</p></div></div><table>${l.map(([a, b]) => `<tr><th>${escM(a)}</th><td>${escM(b)}</td></tr>`).join('')}</table><p class="cap">${escM(m.forme)}</p></div>`;
+  return `<div class="mob" style="--mc:${m.coul};--mg:${m.deg || m.coul}"><div class="mob-tete"><img src="${MOB_IMG[k]}" alt="Affiche du mobile ${escM(m.nom)}" loading="lazy"><div><h3>${escM(m.nom)}</h3><small>${escM(m.theme)}</small><p>${escM(m.pct[0])}-${escM(m.pct[1])} % · ${escM(m.reps[0])}-${escM(m.reps[1])} rép. · récup ${escM(m.recup)}</p></div></div><table>${l.map(([a, b]) => `<tr><th>${escM(a)}</th><td>${escM(b)}</td></tr>`).join('')}</table><p class="cap">${escM(m.forme)}</p></div>`;
 }
 function echelleHTML(){ return `<div class="ech">${ECHELLE.map(([n, t, d, c]) => `<div style="background:${c}"><b>${n}</b><span><b>${escM(t)}</b> ${escM(d)}</span></div>`).join('')}</div>`; }
 function ateliersHTML(ids){ return `<ul class="ats">${ids.map(id => { const a = atelier(id); const im = imgAtelier(id);return a ? `<li>${im ? `<img class="vign" src="${im}" alt="" loading="lazy">` : ''}<b>${a.n ? a.n + '. ' : ''}${escM(a.nom)}</b> <span>${escM(a.groupe)} · ${escM(SUPPORTS[a.support].nom)}${a.places ? ` · ${a.places} binômes max` : ''}</span></li>` : ''; }).join('')}</ul>`; }
