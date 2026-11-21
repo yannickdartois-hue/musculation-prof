@@ -193,10 +193,10 @@ const ECHAUF_LIB = [
 /* listes d'exercices par défaut des séances de mobiles (déplacées ici en v3.0 pour l'outil prof) */
 const LISTES_DEFAUT = {S4:['dch','rowh','dm','squath','fentes','hip'], S5:['dch','rowb','squath','sdtj'], S6:['dch','rowh','squath','hip']};
 /* v3.0 : bilan de l'échauffement guidé (parties faites), partagé par l'appli élève et l'outil prof */
-const ECH_PARTS = {P1:[['corde','jjack','genoux','talons','chasses','squatjack','burpee','fente_m','chenille','ours','crabe'], 2],
+const ECH_PARTS = {P1:[['corde','jjack','genoux','talons','chasses','squatjack','burpee','fente_m','chenille','ours','crabe'], 4],
  P2:[['mob_cheville','mob_genou','mob_hanche','mob_buste','mob_epaule','mob_poignet'], 6],
- P3:[['act_scap','act_y','act_pont','act_gm','act_fente','act_squat'], 3],
- P4:[['sjump','squat','pompes_mur','pompes_step','pompes_genoux','pompes','dips','gainage','gainlat','crunch','crunch_inv','deadbug','birddog','mclimb','taps','rtwist'], 3]};
+ P3:[['act_scap','act_y','act_pont','act_gm','act_fente','act_squat'], 4],
+ P4:[['sjump','squat','pompes_mur','pompes_step','pompes_genoux','pompes','dips','gainage','gainlat','crunch','crunch_inv','deadbug','birddog','mclimb','taps','rtwist'], 4]};
 function echBilan(wc, n, jour){
   wc = wc || [];const h = k => wc.includes(k);let f = 0, t = 0;
   Object.entries(ECH_PARTS).forEach(([k, [l, m]]) => {t++;if(h(k) || l.filter(h).length >= m)f++});
