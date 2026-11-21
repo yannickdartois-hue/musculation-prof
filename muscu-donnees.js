@@ -7,7 +7,7 @@
    v2.0 (20/11/2026) : menu de 14 ateliers, uniquement avec charges (menu:true) ; les ateliers au poids du corps
    servent à l'échauffement et restent décrits ici pour les anciens carnets. S1 circuit, S2-S3 tests (4 à 5 charges
    max par séance), S4 tonification, S5 volume, S6 puissance (6 ateliers, puissPct) et choix, S7 projet, S8-S9 évaluation. */
-const MUSCU_VERSION = 'v2.5';
+const MUSCU_VERSION = 'v2.6';
 const DUREE_PRATIQUE = 70;
 
 /* ---------- Matériel (salle de judo, tatami) ---------- */
@@ -135,9 +135,57 @@ const ATELIERS = [
   crit:["Ballon contre la poitrine, coudes ouverts.","Pousser le plus vite possible vers le partenaire, bras tendus à la fin."], resp:"Souffler en lançant.", secu:"Le partenaire est prêt avant chaque lancer."}
 ];
 const atelier = id => ATELIERS.find(a => a.id === id);
-/* Illustrations des ateliers (fiche « Musculation : suivi du travail des élèves », dessins © Espace-musculation.com) */
-const IMAGES_AT = ["curlb", "mollets", "montee", "crunch", "squat", "extri", "rowb", "tirage", "elev", "twist", "dc", "fentes", "rowh", "curlh", "gainage", "pompes", "gainlat", "dips", "dch", "ecarte", "dm", "oiseau", "squath", "sdtj"];
-const IMAGES_SVG = ["pullover", "hip"];   // dessins libres de droit (Claude, 20/11/2026)   // schémas provisoires (pas de dessin dans la fiche)
+/* Illustrations des ateliers. v2.6 (21/11/2026) : dessins tirés des fiches d'exercice d'Y. Dartois (générées par IA) ;
+   restent © Espace-musculation.com en attendant leur fiche : dch, oiseau, mollets, montee, elev, twist, ecarte. */
+const IMAGES_AT = ["curlb", "mollets", "montee", "crunch", "squat", "extri", "rowb", "tirage", "elev", "twist", "dc", "fentes", "rowh", "curlh", "gainage", "pompes", "gainlat", "dips", "dch", "ecarte", "dm", "oiseau", "squath", "sdtj", "hip", "sbox", "sjump"];
+const IMAGES_SVG = ["pullover"];   // dessin libre de droit (Claude, 20/11/2026), en attendant la fiche
+/* Fiches d'exercice complètes (onglet « Fiches ») */
+const FICHES = {dc:"Développé couché barre", dm:"Développé militaire assis", rowh:"Rowing haltère un bras", rowb:"Rowing barre buste penché", tirage:"Tirage menton barre EZ", curlb:"Curl barre", extri:"Extension triceps allongé", squath:"Squat goblet", fentes:"Fentes avant", sdtj:"Soulevé de terre jambes semi-tendues", hip:"Hip thrust au sol", sbox:"Saut sur box", curlh:"Variante : curl alterné avec rotation"};
+const ficheImg = id => FICHES[id] ? 'img/fiches/' + id + '.jpg' : null;
+/* Répertoire illustré de l'échauffement (onglet « Fiches ») : [id, nom, consigne] ; image img/echauf/<id>.jpg, ou img/ateliers/<id>.jpg pour les ateliers */
+const ECHAUF_LIB = [
+ {t:"1. Mise en route cardio", i:"Course, corde à sauter ou cross training : jusqu'à la sensation de chaleur et un léger essoufflement.", l:[
+  ["corde","Corde à sauter","Sur l'avant des pieds, coudes près du corps : ce sont les poignets qui tournent. 1 à 2 min."],
+  ["burpee","Burpee","Accroupi mains au sol, planche, retour accroupi, saut bras en l'air. 5 à 10."],
+  ["fente_m","Fentes marchées","Grand pas, genou arrière qui frôle le sol, buste droit. 10 pas."],
+  ["chenille","La chenille","Jambes presque tendues, marchez avec les mains jusqu'à la planche, puis ramenez les pieds. 5 fois."],
+  ["ours","Marche de l'ours","Mains et pieds au sol, genoux à 2 cm du sol, dos plat : avancez main et pied opposés. 10 m."],
+  ["crabe","Marche du crabe","Mains derrière, bassin levé dans l'axe des cuisses : avancez à reculons. 10 m."]]},
+ {t:"2. Mobilisation articulaire", i:"10 cercles dans chaque sens, sans forcer.", l:[
+  ["mob_cheville","Chevilles","Sur un pied, la pointe de l'autre pied dessine des cercles."],
+  ["mob_genou","Genoux","Pieds joints, mains sur les genoux : petits cercles."],
+  ["mob_hanche","Hanches","Mains sur les hanches : grands cercles du bassin."],
+  ["mob_epaule","Épaules","Bras tendus : grands cercles vers l'arrière puis vers l'avant."],
+  ["mob_poignet","Poignets","Doigts croisés : cercles des poignets."],
+  ["mob_buste","Rotation du buste","Bassin face à l'avant, tournez le haut du corps d'un côté puis de l'autre."]]},
+ {t:"3. Activation avant la musculation", i:"Le placement des ateliers, sans charge : 10 répétitions lentes.", l:[
+  ["act_scap","Pompes scapulaires","Bras tendus en planche : la poitrine descend entre les épaules en serrant les omoplates, puis repousse. Prépare développé couché et rowing."],
+  ["act_y","Y allongé","À plat ventre, bras tendus en Y, pouces vers le haut : décollez les bras 2 s. Prépare oiseau, tirage menton, développé militaire."],
+  ["act_pont","Pont fessier","Sur le dos, pieds près des fesses : montez le bassin jusqu'à l'alignement épaules-hanches-genoux, serrez 2 s. Prépare le hip thrust."],
+  ["act_gm","Good morning","Mains derrière la tête, genoux légèrement fléchis : penchez le buste en poussant les fesses en arrière, dos plat. Prépare soulevé de terre et rowing barre."],
+  ["act_fente","Fente avec rotation","Grande fente, main au sol à l'intérieur du pied avant, l'autre bras s'ouvre vers le plafond. 5 par côté. Prépare fentes et squat."],
+  ["act_squat","Squat profond tenu","Talons au sol, mains jointes, coudes qui écartent les genoux. Tenez 20 à 30 s. Prépare le squat goblet."]]},
+ {t:"4. Renforcement au poids du corps", i:"Le réveil musculaire : choisis ton niveau.", l:[
+  ["squat","Squat","Cuisses parallèles au sol, talons au sol, dos droit. 10."],
+  ["dips","Dips au banc","Mains au bord du banc, coudes vers l'arrière jusqu'à 90°. 10."],
+  ["crunch","Crunch","Bas du dos au sol, décollez seulement les épaules. 10."],
+  ["gainage","Gainage ventral","Sur les avant-bras, corps aligné de la tête aux talons. 20 s."],
+  ["gainlat","Gainage latéral","Sur un avant-bras, bassin levé, corps aligné. 15 s par côté."],
+  ["sjump","Squat jump","Demi-squat puis saut bras en l'air, réception souple. 5 à 8 (mise en route de la séance Puissance)."]]},
+ {t:"Pompes : choisis ton niveau", i:"Corps aligné, poitrine près de l'appui, coudes à 45° du corps. 10 bien faites valent mieux que 20 mal faites.", l:[
+  ["pompes_mur","1. Contre le mur","Mains au mur à hauteur d'épaules, un pas en arrière."],
+  ["pompes_step","2. Mains sur un step","Mains sur le step, pieds au sol."],
+  ["pompes_genoux","3. Sur les genoux","Genoux au sol, corps aligné des épaules aux genoux."],
+  ["pompes","4. Classiques","Mains sous les épaules, corps aligné de la tête aux talons."]]},
+ {t:"Abdominaux et gainage", i:"Le bas du dos ne se creuse jamais. 10 répétitions ou 20 s.", l:[
+  ["crunch_inv","Crunch inversé","Genoux au-dessus des hanches : enroulez le bassin vers la poitrine."],
+  ["deadbug","Dead bug","Dos plaqué : tendez un bras et la jambe opposée, puis changez."],
+  ["birddog","Bird dog","À quatre pattes, dos plat : tendez un bras et la jambe opposée, 2 s."],
+  ["mclimb","Mountain climber","En planche, ramenez les genoux vers la poitrine l'un après l'autre, bassin bas."],
+  ["taps","Planche, épaules touchées","En planche, une main touche l'épaule opposée, le bassin ne bouge pas."],
+  ["rtwist","Russian twist sans charge","Assis, buste penché en arrière dos droit : tournez d'un côté puis de l'autre."]]}
+];
+const imgEchauf = id => (IMAGES_AT.includes(id) ? 'img/ateliers/' : 'img/echauf/') + id + '.jpg';
 const imgAtelier = id => IMAGES_AT.includes(id) ? 'img/ateliers/' + id + '.jpg' : IMAGES_SVG.includes(id) ? 'img/ateliers/' + id + '.svg' : null;
 /* v2.0 : le menu = 14 ateliers avec charges. Circuit de S1 sur les 14 (4 min par atelier), en alternant haut et bas du corps. */
 const MENU = ATELIERS.filter(a => a.menu).map(a => a.id);
@@ -210,7 +258,7 @@ const SECU = {
 };
 
 /* ---------- Échauffements ---------- */
-const ECH_BASE = "P1 · Course à allure modérée (zone blanche) jusqu'à la sensation de chaleur et un léger essoufflement. Prendre son pouls : au-dessus de 140, repartir 2 min à cette allure (zone bleue). Mobiliser chevilles, genoux, hanches, épaules, poignets. P2 · Réveil musculaire au poids du corps (ateliers du circuit d'échauffement) : 10 squats, 10 pompes adaptées, 10 dips au banc, 10 crunchs, 20 s de gainage ventral et 15 s de gainage latéral par côté. P3 · Spécifique : chaque exercice du jour, sans charge ou très léger, 1 série de 10 en soignant le placement.";
+const ECH_BASE = "P1 · Course ou corde à sauter à allure modérée (zone blanche) jusqu'à la sensation de chaleur et un léger essoufflement. Prendre son pouls : au-dessus de 140, repartir 2 min à cette allure (zone bleue). Mobiliser chevilles, genoux, hanches, épaules, poignets. P2 · Réveil musculaire au poids du corps (ateliers du circuit d'échauffement) : 10 squats, 10 pompes adaptées, 10 dips au banc, 10 crunchs, 20 s de gainage ventral et 15 s de gainage latéral par côté. P3 · Activation (pompes scapulaires, Y allongé, pont fessier, good morning, fente avec rotation, squat profond tenu), puis chaque exercice du jour, sans charge ou très léger, 1 série de 10 en soignant le placement. Tous ces exercices sont illustrés dans l'onglet Fiches.";
 
 /* ---------- Séances ----------
    tl : [libellé, durée en min, type] ; types : "inst" (accueil, installation : bloc d'information) ; tous les autres
