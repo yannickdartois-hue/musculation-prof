@@ -7,7 +7,7 @@
    v2.0 (20/11/2026) : menu de 14 ateliers, uniquement avec charges (menu:true) ; les ateliers au poids du corps
    servent à l'échauffement et restent décrits ici pour les anciens carnets. S1 circuit, S2-S3 tests (4 à 5 charges
    max par séance), S4 tonification, S5 volume, S6 puissance (6 ateliers, puissPct) et choix, S7 projet, S8-S9 évaluation. */
-const MUSCU_VERSION = 'v2.9';
+const MUSCU_VERSION = 'v3.0';
 const DUREE_PRATIQUE = 70;
 
 /* ---------- Matériel (salle de judo, tatami) ---------- */
@@ -573,10 +573,12 @@ function objTenuM(obj, real){if(!obj || !obj.k || obj.v == null || obj.v === '' 
 
 /* ================== Schémas de l'écran de cours (HTML) ================== */
 const escM = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* v3.2 : affiches des mobiles (images d'Y. Dartois, générées par IA) */
+const MOB_IMG = {tonif:'img/mobiles/tonif.jpg', volume:'img/mobiles/volume.jpg', puiss:'img/mobiles/puiss.jpg'};
 function mobileHTML(k){
   const m = MOBILES[k]; if(!m) return '';
   const l = [["% de la charge max", `${m.pct[0]}-${m.pct[1]} %`],["Séries", `${m.series[0]}-${m.series[1]}`],["Répétitions", `${m.reps[0]}-${m.reps[1]}`],["Récupération", m.recup],["Exécution", m.exec],["Ressenti visé", `${m.ressenti[0]} à ${m.ressenti[1]} sur 10`],["Sensation attendue", m.attendu],["Progression", m.ordreTxt]];
-  return `<div class="mob" style="--mc:${m.coul}"><h3>${escM(m.nom)} <small>${escM(m.theme)}</small></h3><table>${l.map(([a, b]) => `<tr><th>${escM(a)}</th><td>${escM(b)}</td></tr>`).join('')}</table><p class="cap">${escM(m.forme)}</p></div>`;
+  return `<div class="mob" style="--mc:${m.coul}"><img class="mob-img" src="${MOB_IMG[k]}" alt="Affiche du mobile ${escM(m.nom)}" loading="lazy"><h3>${escM(m.nom)} <small>${escM(m.theme)}</small></h3><table>${l.map(([a, b]) => `<tr><th>${escM(a)}</th><td>${escM(b)}</td></tr>`).join('')}</table><p class="cap">${escM(m.forme)}</p></div>`;
 }
 function echelleHTML(){ return `<div class="ech">${ECHELLE.map(([n, t, d, c]) => `<div style="background:${c}"><b>${n}</b><span><b>${escM(t)}</b> ${escM(d)}</span></div>`).join('')}</div>`; }
 function ateliersHTML(ids){ return `<ul class="ats">${ids.map(id => { const a = atelier(id); const im = imgAtelier(id);return a ? `<li>${im ? `<img class="vign" src="${im}" alt="" loading="lazy">` : ''}<b>${a.n ? a.n + '. ' : ''}${escM(a.nom)}</b> <span>${escM(a.groupe)} · ${escM(SUPPORTS[a.support].nom)}${a.places ? ` · ${a.places} binômes max` : ''}</span></li>` : ''; }).join('')}</ul>`; }
