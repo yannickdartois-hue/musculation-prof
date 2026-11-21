@@ -21,7 +21,8 @@ const SUPPORTS = {
  b160:  {nom:"Barre droite 160 cm", vide:8, disques:true, unite:"barre chargée"},
  b180:  {nom:"Barre droite 180 cm", vide:9, disques:true, unite:"barre chargée"},
  pdc:   {nom:"Poids du corps", unite:"variante"},
- mb:    {nom:"Medecine ball", unite:"variante"}
+ mb:    {nom:"Medecine ball", unite:"variante"},
+ box:   {nom:"Box de pliométrie en bois (40 / 50 cm)", unite:"variante"}
 };
 const DISQUES = [10, 5, 2, 1, 0.5];   // disques disponibles (paires, alésage 28 mm)
 
@@ -110,6 +111,11 @@ const ATELIERS = [
  {id:"squath", n:0, nom:"Squat haltères (goblet)", zone:"bas", groupe:"Cuisses et fessiers", muscles:"Quadriceps, fessiers", support:"hreg", type:"charge", menu:true, puissance:true, puissPct:[40,60], depart:8,
   crit:["Pieds largeur d'épaules, un haltère tenu vertical contre la poitrine (ou deux haltères le long du corps).","Descendre jusqu'aux cuisses parallèles au sol, dos droit, talons au sol.","Genoux dans l'axe des pieds ; en Puissance, remonter vite jusqu'à la pointe des pieds sans quitter le sol."],
   resp:"Inspirer en descendant, souffler en remontant.", secu:"Pas de barre sur les épaules : il n'y a pas de cage à squat. Talons qui décollent : cale sous les talons.", moins:"Haltère plus léger.", plus:"Pause de 2 s en bas."},
+ /* v2.5 : saut sur box, réservé au mobile Puissance (2 box en bois, arête avant protégée par de la mousse) */
+ {id:"sbox", n:0, nom:"Saut sur box", zone:"bas", groupe:"Cuisses et fessiers", muscles:"Quadriceps, fessiers, mollets", support:"box", type:"variante", menu:false, plio:true, puissance:true, places:2,
+  niveaux:["Saut sur un step à deux hauteurs","Saut sur la box côté 40 cm","Saut sur la box côté 50 cm"],
+  crit:["Debout à un pas de la box, pieds largeur de hanches ; flexion rapide des jambes, bras en arrière.","Sauter en lançant les bras, se réceptionner les deux pieds entiers sur la box, genoux souples dans l'axe des pieds, sans bruit.","Se redresser debout sur la box, puis redescendre en marchant, un pied après l'autre, par l'arrière."],
+  resp:"Souffler à l'impulsion.", secu:"Jamais la hauteur de 60 cm. Arête avant protégée par la mousse, box posée sur le sol dur, jamais sur le tatami. Redescendre en marchant, jamais en sautant. 3 à 5 sauts par série ; une réception lourde ou un pied qui accroche = arrêt de la série. On ne passe au niveau suivant qu'après une série entière de réceptions silencieuses.", moins:"Niveau inférieur (step).", plus:"Niveau supérieur, sans dépasser 50 cm."},
  {id:"sdtj", n:0, nom:"Soulevé de terre jambes semi-tendues", zone:"bas", groupe:"Ischio-jambiers", muscles:"Ischio-jambiers, fessiers, lombaires", support:"b120", type:"charge", menu:true, depart:16,
   crit:["Barre posée sur deux piles de steps à hauteur des genoux : la prendre debout, mains largeur d'épaules, paumes vers soi, genoux légèrement fléchis et fixes.","Pencher le buste en poussant les fesses vers l'arrière, dos plat, la barre glisse le long des cuisses.","Descendre jusqu'à mi-tibias, ou dès que le dos veut s'arrondir, puis remonter en serrant les fesses."],
   resp:"Inspirer en descendant, souffler en remontant.", secu:"Dos plat obligatoire : dos rond = arrêt de la série. Barre prise et reposée sur les steps, jamais au sol. Démonstration en S1, charges modérées.", moins:"Deux haltères le long des jambes, ou descente jusqu'aux genoux.", plus:"Descente en 3 s."},
@@ -319,7 +325,7 @@ const SEANCES = [
    fiche("Ressentis, envoi, rangement","Fin de séance",8,"Rangement puis bilan.","Un élève envoie le carnet.",["Cohérence des ressentis avec le mobile.","Rangement, envoi."],null,"Carnet envoyé.",null,null,null)
   ]},
  {id:"S6", titre:"Mobile Puissance, choisir son mobile", obj:"Éprouver la puissance : 3 à 6 répétitions à 30-60 %, le plus vite possible, récupération complète ; comparer les 3 mobiles, choisir le sien et construire son échelle personnelle.",
-  install:"Les 6 ateliers de puissance : développé couché (barre ou haltères au sol), développé militaire, rowing haltère, squat haltères, hip thrust. Chaque binôme en fait 4, dont au moins un du bas du corps.",
+  install:"Les ateliers de puissance : développé couché (barre ou haltères au sol), développé militaire, rowing haltère, squat haltères, saut sur box (2 box en bois sur le sol dur, arête avant protégée par de la mousse, côté 40 ou 50 cm), hip thrust. Chaque binôme en fait 4, dont au moins un du bas du corps.",
   bilan:"Quel mobile choisis-tu, et pourquoi ? Quelle sensation te le dit ?",
   prepare:["Le choix du mobile pour le projet (S7 à S9).","L'échelle de ressentis personnelle.","L'évaluation AFL2 et AFL3 : analyse et coaching notés après chaque exercice, de la S4 à la S7."],
   tl:[["Accueil, installation",8,"inst"],["Échauffement progressif",12,"ech"],["Le mobile Puissance",3,"ex"],["Bas du corps : vitesse maximale",15,"ex"],["Haut du corps : vitesse maximale",17,"ex"],["Comparer, choisir, mon échelle",10,"ex"],["Envoi, rangement",5,"bil"]],
@@ -328,8 +334,8 @@ const SEANCES = [
    fiche("Le mobile Puissance","Consignes",3,"Regroupement.","Le partenaire regarde la vitesse : dès qu'elle baisse, il dit STOP.",
     ["Charge selon l'atelier : 30-45 % aux développés couchés, 30-40 % au militaire, 40-50 % au rowing haltère, 40-60 % au squat haltères et au hip thrust.","3 à 6 répétitions, 4 séries, 2 à 3 min de récupération complète.","Montée la plus rapide possible, descente contrôlée en 1 à 2 s, pas de rebond.","Arrêt dès que la vitesse baisse : le partenaire touche « la vitesse a baissé ».","Sensation attendue : tension générale, sans brûlure."],
     null,"Chacun sait quand s'arrêter.",null,null,"mobile:puiss"),
-   fiche("Bas du corps : vitesse maximale","Puissance",15,"Squat haltères (remontée explosive jusqu'à la pointe des pieds, sans quitter le sol) ou hip thrust (poussée explosive des hanches, 1 s en haut). 4 séries de 4 à 6.","Le partenaire juge la vitesse et dit STOP dès qu'elle baisse.",
-    ["Charge à 40-60 % (l'appli la calcule).","Le plus vite possible à la montée, descente contrôlée.","Vitesse qui baisse : la série s'arrête, même avant 4 répétitions."],
+   fiche("Bas du corps : vitesse maximale","Puissance",15,"Squat haltères (remontée explosive jusqu'à la pointe des pieds, sans quitter le sol), saut sur box juste après (3 à 5 sauts) ou hip thrust (poussée explosive des hanches, 1 s en haut). 4 séries de 4 à 6.","Le partenaire juge la vitesse et dit STOP dès qu'elle baisse.",
+    ["Charge à 40-60 % (l'appli la calcule).","Le plus vite possible à la montée, descente contrôlée.","Vitesse qui baisse : la série s'arrête, même avant 4 répétitions.","Saut sur box : 3 à 5 sauts, réception silencieuse, redescente en marchant ; box à 40 cm puis 50 cm, jamais 60."],
     "Vitesse maximale à chaque répétition.","1 à 2 exercices, ressentis notés.","Charge à 40 %.","Charge à 60 %.","mobile:puiss"),
    fiche("Haut du corps : vitesse maximale","Puissance",17,"Développé couché (barre avec pareur, ou haltères au sol), développé militaire assis, rowing haltère. 4 séries de 4 à 6.","Le partenaire juge la vitesse ; il pare au développé couché barre.",
     ["Pousser ou tirer le plus vite possible, redescendre en contrôlant.","Vitesse qui baisse : la série s'arrête.","Ressenti après chaque exercice : tension générale ?"],
@@ -468,7 +474,7 @@ const POINT_CLE = {dc:"Fesses collées au banc, barre sur la poitrine", dch:"Cou
  rowb:"Dos plat, barre tirée vers le nombril", tirage:"Coudes pas plus haut que les épaules, poignets droits", dm:"Dos collé au dossier, pas de cambrure",
  curlb:"Coudes fixes, pas d'élan du buste", extri:"Coudes fixes, pointés vers le plafond", fentes:"Genou avant au-dessus de la cheville, buste droit",
  pullover:"Bras presque tendus, bas du dos plaqué", oiseau:"Dos plat, les bras montent sur le côté", squath:"Dos droit, genoux dans l'axe des pieds",
- sdtj:"Dos plat, la barre frôle les cuisses", hip:"Bassin aligné en haut, haltère calé sur la mousse"};
+ sdtj:"Dos plat, la barre frôle les cuisses", sbox:"Réception silencieuse sur les deux pieds, genoux dans l'axe", hip:"Bassin aligné en haut, haltère calé sur la mousse"};
 /* répétitions en réserve (RIR) : « Combien aurais-tu pu en faire encore, propres ? » */
 const RIR_Q = [["0","0"],["12","1 ou 2"],["34","3 ou 4"],["5","5 et +"]];
 const RIR_CIBLE = {tonif:[2,2], volume:[1,1], puiss:[2,3]};   // index dans RIR_Q
