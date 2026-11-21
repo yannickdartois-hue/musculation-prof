@@ -7,7 +7,7 @@
    v2.0 (20/11/2026) : menu de 14 ateliers, uniquement avec charges (menu:true) ; les ateliers au poids du corps
    servent à l'échauffement et restent décrits ici pour les anciens carnets. S1 circuit, S2-S3 tests (4 à 5 charges
    max par séance), S4 tonification, S5 volume, S6 puissance (6 ateliers, puissPct) et choix, S7 projet, S7-S8 projet, S9 évaluation sur 3 exercices tirés au sort (v5.0). */
-const MUSCU_VERSION = 'v4.0';
+const MUSCU_VERSION = 'v4.1';
 const DUREE_PRATIQUE = 70;
 
 /* ---------- Matériel (salle de judo, tatami) ---------- */
@@ -53,8 +53,8 @@ const ATELIERS = [
   crit:["Pieds largeur de bassin, genoux fléchis, buste penché à 45°, dos plat.","Tirer la barre vers le nombril, coudes près du corps.","Le buste ne se relève pas pendant la série."],
   resp:"Souffler en tirant.", secu:"Dos rond = arrêt de la série. Charges modérées.", moins:"Rowing haltère un bras.", plus:"Pause de 1 s barre au ventre."},
  {id:"tirage", n:3, nom:"Tirage menton (barre EZ)", zone:"haut", groupe:"Épaules", muscles:"Deltoïdes, trapèzes", support:"z", type:"charge", menu:true, depart:10,
-  crit:["Debout, mains sur les prises larges de la barre EZ, écartées largeur d'épaules, poignets droits.","Monter la barre le long du corps jusqu'à la poitrine, coudes vers l'extérieur.","Coudes à hauteur des épaules au maximum, jamais au-dessus."],
-  resp:"Souffler en montant.", secu:"Poignets droits, mains écartées et coudes jamais au-dessus des épaules : sinon l'épaule s'irrite.", moins:"Barre seule.", plus:"Descente en 3 s."},
+  crit:["Debout, mains sur les prises larges de la barre EZ, écartées largeur d'épaules, poignets droits.","Monter la barre le long du corps jusqu'au bas du sternum seulement, coudes vers l'extérieur.","Coudes à hauteur des épaules au maximum, jamais au-dessus."],
+  resp:"Souffler en montant.", secu:"Prise large, poignets droits, barre jusqu'au bas du sternum seulement, coudes jamais au-dessus des épaules : sinon l'épaule s'irrite. Douleur à l'épaule = arrêt et autre exercice.", moins:"Barre seule.", plus:"Descente en 3 s."},
  {id:"dm", n:0, nom:"Développé militaire haltères assis", zone:"haut", groupe:"Épaules", muscles:"Deltoïdes, triceps", support:"hreg", type:"charge", menu:true, puissance:true, puissPct:[30,40], test:true, depart:6,
   crit:["Assis sur le banc, dos droit, abdominaux serrés.","Haltères à hauteur des oreilles, paumes vers l'avant.","Pousser à la verticale sans cambrer."],
   resp:"Souffler en poussant.", secu:"Le dos reste collé au dossier ou droit : pas de cambrure.", moins:"Haltères plus légers.", plus:"Descente en 3 s.", video:"DL4_developpe_militaire_haltere"},
@@ -108,7 +108,7 @@ const ATELIERS = [
  {id:"oiseau", n:0, nom:"Oiseau haltères", zone:"haut", groupe:"Épaules", muscles:"Deltoïdes postérieurs, rhomboïdes, trapèzes", support:"hreg", type:"charge", menu:true, depart:3,
   crit:["Buste penché en avant, dos plat, genoux fléchis, haltères sous les épaules.","Ouvrir les bras sur le côté, coudes légèrement fléchis, jusqu'à l'horizontale.","Redescendre en contrôlant."],
   resp:"Souffler en ouvrant.", secu:"Charges très légères ; dos plat (ou assis, buste posé sur les cuisses).", moins:"Assis, buste sur les cuisses.", plus:"Pause de 1 s en haut."},
- {id:"squath", n:0, nom:"Squat haltères (goblet)", zone:"bas", groupe:"Cuisses et fessiers", muscles:"Quadriceps, fessiers", support:"hreg", type:"charge", menu:true, puissance:true, puissPct:[40,60], depart:8,
+ {id:"squath", n:0, nom:"Squat haltères (goblet)", zone:"bas", groupe:"Cuisses et fessiers", muscles:"Quadriceps, fessiers", support:"hreg", type:"charge", menu:true, puissPct:[40,60], depart:8,   /* v5.1 : retiré de la Puissance (limité par la prise) */
   crit:["Pieds largeur d'épaules, un haltère tenu vertical contre la poitrine (ou deux haltères le long du corps).","Descendre jusqu'aux cuisses parallèles au sol, dos droit, talons au sol.","Genoux dans l'axe des pieds ; en Puissance, remonter vite jusqu'à la pointe des pieds sans quitter le sol."],
   resp:"Inspirer en descendant, souffler en remontant.", secu:"Pas de barre sur les épaules : il n'y a pas de cage à squat. Talons qui décollent : cale sous les talons.", moins:"Haltère plus léger.", plus:"Pause de 2 s en bas."},
  /* v2.5 : saut sur box, réservé au mobile Puissance (2 box en bois, arête avant protégée par de la mousse) */
@@ -136,8 +136,8 @@ const ATELIERS = [
 ];
 const atelier = id => ATELIERS.find(a => a.id === id);
 /* Illustrations des ateliers. v2.6 (21/11/2026) : dessins tirés des fiches d'exercice d'Y. Dartois (générées par IA) ;
-   restent © Espace-musculation.com (ateliers hors circuit) : mollets, montee, elev, twist, ecarte. */
-const IMAGES_AT = ["curlb", "mollets", "montee", "crunch", "squat", "extri", "rowb", "tirage", "elev", "twist", "dc", "fentes", "rowh", "curlh", "gainage", "pompes", "gainlat", "dips", "dch", "ecarte", "dm", "oiseau", "squath", "sdtj", "hip", "sbox", "sjump", "pullover"];
+   v5.1 : les dessins © Espace-musculation.com des ateliers hors circuit sont retirés. */
+const IMAGES_AT = ["curlb", "crunch", "squat", "extri", "rowb", "tirage", "dc", "fentes", "rowh", "curlh", "gainage", "pompes", "gainlat", "dips", "dch", "dm", "oiseau", "squath", "sdtj", "hip", "sbox", "sjump", "pullover"];
 const IMAGES_SVG = [];   // dessin libre de droit (Claude, 20/11/2026), en attendant la fiche
 /* Fiches d'exercice complètes (onglet « Fiches ») */
 const FICHES = {dc:"Développé couché barre", dm:"Développé militaire assis", rowh:"Rowing haltère un bras", rowb:"Rowing barre buste penché", tirage:"Tirage menton barre EZ", curlb:"Curl barre", extri:"Extension triceps allongé", squath:"Squat goblet", fentes:"Fentes avant", sdtj:"Soulevé de terre jambes semi-tendues", hip:"Hip thrust au sol", sbox:"Saut sur box", dch:"Développé couché haltères sur steps", oiseau:"Oiseau", pullover:"Pull-over barre triceps sur steps", curlh:"Variante : curl alterné avec rotation"};
@@ -193,10 +193,9 @@ const ECHAUF_LIB = [
 /* listes d'exercices par défaut des séances de mobiles (déplacées ici en v3.0 pour l'outil prof) */
 const LISTES_DEFAUT = {S4:['dch','rowh','squath'], S5:['dc','rowb','fentes'], S6:['dm','hip','sbox']};   // v5.0 : 3 exercices, différents d'une séance à l'autre
 /* v3.0 : bilan de l'échauffement guidé (parties faites), partagé par l'appli élève et l'outil prof */
-const ECH_PARTS = {P1:[['corde','jjack','genoux','talons','chasses','squatjack','burpee','fente_m','chenille','ours','crabe'], 4],
+const ECH_PARTS = {P1:[['corde','jjack','genoux','talons','chasses','squatjack','burpee','fente_m','chenille','ours','crabe','sjump'], 2],
  P2:[['mob_cheville','mob_genou','mob_hanche','mob_buste','mob_epaule','mob_poignet'], 6],
- P3:[['act_scap','act_y','act_pont','act_gm','act_fente','act_squat'], 4],
- P4:[['sjump','squat','pompes_mur','pompes_step','pompes_genoux','pompes','dips','gainage','gainlat','crunch','crunch_inv','deadbug','birddog','mclimb','taps','rtwist'], 4]};
+ P3:[['act_scap','act_y','act_pont','act_gm','act_fente','act_squat'], 4]};   // v5.1 : renforcement facultatif
 function echBilan(wc, n, jour){
   wc = wc || [];const h = k => wc.includes(k);let f = 0, t = 0;
   Object.entries(ECH_PARTS).forEach(([k, [l, m]]) => {t++;if(h(k) || l.filter(h).length >= m)f++});
@@ -231,7 +230,7 @@ const MOBILES = {
    exec:"Montée la plus rapide possible, descente contrôlée ; arrêt dès que la vitesse baisse", ressenti:[5,6], sensation:"tension",
    attendu:"Tension générale, sensation de « compacité », sans brûlure.",
    ordre:["charge","series"], ordreTxt:"Charge (tant que la vitesse reste), puis séries", nbEx:[4,5],
-   forme:"6 ateliers seulement : développé couché (barre ou haltères sur steps), développé militaire, rowing haltère, squat haltères, hip thrust. Le partenaire dit STOP dès que la vitesse baisse."}
+   forme:"6 ateliers seulement : développé couché (barre ou haltères sur steps), développé militaire, rowing haltère, saut sur box, hip thrust. Le partenaire dit STOP dès que la vitesse baisse."}
 };
 const MOBILES_ORDRE = ["tonif","volume","puiss"];
 /* v4.1 : couples % × répétitions (vérifiés : table de charge NSCA, Nuzzo et al. 2023, ACSM 2009).
@@ -387,7 +386,7 @@ const SEANCES = [
    fiche("Ressentis, envoi, rangement","Fin de séance",8,"Rangement puis bilan.","Un élève envoie le carnet.",["Cohérence des ressentis avec le mobile.","Rangement, envoi."],null,"Carnet envoyé.",null,null,null)
   ]},
  {id:"S6", titre:"Mobile Puissance (2 niveaux)", obj:"Tout le monde éprouve la puissance, à son niveau : découverte (30 % × 6) ou confirmé sur avis du professeur (45 % × 5, puis 60 % × 3). 3 ou 4 exercices, dont au moins 2 nouveaux.",
-  install:"Ateliers de puissance : développé couché (barre ou haltères sur steps), développé militaire, rowing haltère, squat haltères, saut sur box (2 box en bois sur le sol dur, arête protégée, 40 ou 50 cm), hip thrust. Au moins 2 exercices jamais faits en S4 et S5.",
+  install:"Ateliers de puissance : développé couché (barre ou haltères sur steps), développé militaire, rowing haltère, saut sur box (2 box en bois sur le sol dur, arête protégée, 40 ou 50 cm), hip thrust. Au moins 2 exercices jamais faits en S4 et S5.",
   bilan:"As-tu senti la « compacité », la vitesse ? Ce mobile te correspond-il ?",
   prepare:["Le choix définitif du mobile en S7, après avoir éprouvé les trois.","L'échelle de ressentis personnelle."],
   tl:[["Accueil, installation",8,"inst"],["Échauffement progressif",12,"ech"],["Le mobile Puissance, les 2 niveaux",4,"ex"],["Mes 3 ou 4 exercices",36,"ex"],["Mon échelle, envoi, rangement",10,"bil"]],
