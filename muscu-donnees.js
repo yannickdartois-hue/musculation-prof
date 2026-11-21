@@ -7,7 +7,7 @@
    v2.0 (20/11/2026) : menu de 14 ateliers, uniquement avec charges (menu:true) ; les ateliers au poids du corps
    servent à l'échauffement et restent décrits ici pour les anciens carnets. S1 circuit, S2-S3 tests (4 à 5 charges
    max par séance), S4 tonification, S5 volume, S6 puissance (6 ateliers, puissPct) et choix, S7 projet, S8-S9 évaluation. */
-const MUSCU_VERSION = 'v2.8';
+const MUSCU_VERSION = 'v2.9';
 const DUREE_PRATIQUE = 70;
 
 /* ---------- Matériel (salle de judo, tatami) ---------- */
@@ -136,11 +136,11 @@ const ATELIERS = [
 ];
 const atelier = id => ATELIERS.find(a => a.id === id);
 /* Illustrations des ateliers. v2.6 (21/11/2026) : dessins tirés des fiches d'exercice d'Y. Dartois (générées par IA) ;
-   restent © Espace-musculation.com en attendant leur fiche : dch, oiseau, mollets, montee, elev, twist, ecarte. */
+   restent © Espace-musculation.com (ateliers hors circuit) : mollets, montee, elev, twist, ecarte. */
 const IMAGES_AT = ["curlb", "mollets", "montee", "crunch", "squat", "extri", "rowb", "tirage", "elev", "twist", "dc", "fentes", "rowh", "curlh", "gainage", "pompes", "gainlat", "dips", "dch", "ecarte", "dm", "oiseau", "squath", "sdtj", "hip", "sbox", "sjump", "pullover"];
 const IMAGES_SVG = [];   // dessin libre de droit (Claude, 20/11/2026), en attendant la fiche
 /* Fiches d'exercice complètes (onglet « Fiches ») */
-const FICHES = {dc:"Développé couché barre", dm:"Développé militaire assis", rowh:"Rowing haltère un bras", rowb:"Rowing barre buste penché", tirage:"Tirage menton barre EZ", curlb:"Curl barre", extri:"Extension triceps allongé", squath:"Squat goblet", fentes:"Fentes avant", sdtj:"Soulevé de terre jambes semi-tendues", hip:"Hip thrust au sol", sbox:"Saut sur box", dch:"Développé couché haltères sur steps", pullover:"Pull-over barre triceps sur steps", curlh:"Variante : curl alterné avec rotation"};
+const FICHES = {dc:"Développé couché barre", dm:"Développé militaire assis", rowh:"Rowing haltère un bras", rowb:"Rowing barre buste penché", tirage:"Tirage menton barre EZ", curlb:"Curl barre", extri:"Extension triceps allongé", squath:"Squat goblet", fentes:"Fentes avant", sdtj:"Soulevé de terre jambes semi-tendues", hip:"Hip thrust au sol", sbox:"Saut sur box", dch:"Développé couché haltères sur steps", oiseau:"Oiseau", pullover:"Pull-over barre triceps sur steps", curlh:"Variante : curl alterné avec rotation"};
 const ficheImg = id => FICHES[id] ? 'img/fiches/' + id + '.jpg' : null;
 /* Répertoire illustré de l'échauffement (onglet « Fiches ») : [id, nom, consigne] ; image img/echauf/<id>.jpg, ou img/ateliers/<id>.jpg pour les ateliers */
 const ECHAUF_LIB = [
