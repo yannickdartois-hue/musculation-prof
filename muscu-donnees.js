@@ -195,12 +195,13 @@ const LISTES_DEFAUT = {S4:['dch','rowh','squath'], S5:['dc','rowb','fentes'], S6
 /* v3.0 : bilan de l'échauffement guidé (parties faites), partagé par l'appli élève et l'outil prof */
 const ECH_PARTS = {P1:[['corde','jjack','genoux','talons','chasses','squatjack','burpee','fente_m','chenille','ours','crabe','sjump'], 2],
  P2:[['mob_cheville','mob_genou','mob_hanche','mob_buste','mob_epaule','mob_poignet'], 6],
- P3:[['act_scap','act_y','act_pont','act_gm','act_fente','act_squat'], 4]};   // v5.1 : renforcement facultatif
+ P3:[['act_scap','act_y','act_pont','act_gm','act_fente','act_squat'], 3]};   // v6.0 : gainage obligatoire + 3 au choix ; renforcement facultatif
 function echBilan(wc, n, jour){
   wc = wc || [];const h = k => wc.includes(k);let f = 0, t = 0;
-  Object.entries(ECH_PARTS).forEach(([k, [l, m]]) => {t++;if(h(k) || l.filter(h).length >= m)f++});
-  if(n >= 4 && jour && jour.length){t++;if(h('P5') || jour.every(at => h('sp:' + at)))f++}
-  else if(n === 2 || n === 3){t++;if(h('P5'))f++}
+  Object.entries(ECH_PARTS).forEach(([k, [l, m]]) => {t++;if(h(k) || ((k !== 'P3' || h('gainage')) && l.filter(h).length >= m))f++});
+  t++;   // v6.0 : 4e étape (spécifique) à toutes les séances
+  if(n >= 4 && jour && jour.length){if(h('P5') || jour.every(at => h('sp:' + at)))f++}
+  else if(h('P5'))f++;
   return [f, t];
 }
 const imgEchauf = id => (IMAGES_AT.includes(id) ? 'img/ateliers/' : 'img/echauf/') + id + '.jpg';
@@ -280,7 +281,7 @@ const SECU = {
 };
 
 /* ---------- Échauffements ---------- */
-const ECH_BASE = "P1 · Course ou corde à sauter à allure modérée (zone blanche) jusqu'à la sensation de chaleur et un léger essoufflement. Prendre son pouls : au-dessus de 140, repartir 2 min à cette allure (zone bleue). Mobiliser chevilles, genoux, hanches, épaules, poignets. P2 · Réveil musculaire au poids du corps (ateliers du circuit d'échauffement) : 10 squats, 10 pompes adaptées, 10 dips au banc, 10 crunchs, 20 s de gainage ventral et 15 s de gainage latéral par côté. P3 · Activation (pompes scapulaires, Y allongé, pont fessier, good morning, fente avec rotation, squat profond tenu), puis chaque exercice du jour, sans charge ou très léger, 1 série de 10 en soignant le placement. Tous ces exercices sont illustrés dans l'onglet Fiches.";
+const ECH_BASE = "Environ 15 min, en 4 étapes que chaque élève coche dans l'appli. 1 · Cardio (5 à 6 min) : course ou corde à sauter à allure modérée (zone blanche) jusqu'à la sensation de chaleur et un léger essoufflement, puis 2 exercices au choix. Prendre son pouls : au-dessus de 140, repartir 2 min à cette allure (zone bleue). 2 · Articulaire : chevilles, genoux, hanches, buste, épaules, poignets. 3 · Activation : gainage ventral OBLIGATOIRE (planche 20 à 30 s, sans aller jusqu'à la fatigue : la sangle abdominale doit protéger le dos pendant les charges), puis 3 exercices au choix (pompes scapulaires, Y allongé, pont fessier, good morning, fente avec rotation, squat profond tenu). 4 · Spécifique : 1 série légère (barre à vide ou très léger, 10 répétitions) sur le premier exercice chargé du jour, en soignant le placement. Renforcement au poids du corps (pompes, dips, crunchs, gainage latéral) : facultatif. Tous ces exercices sont illustrés dans l'onglet Fiches.";
 
 /* ---------- Séances ----------
    tl : [libellé, durée en min, type] ; types : "inst" (accueil, installation : bloc d'information) ; tous les autres
@@ -360,7 +361,7 @@ const SEANCES = [
   prepare:["Le premier des 3 mobiles éprouvés.","Le choix définitif du mobile en S7.","L'évaluation AFL2 et AFL3 : analyse et coaching notés après chaque exercice, de la S4 à la S8."],
   tl:[["Accueil, installation",8,"inst"],["Échauffement",12,"ech"],["Le mobile Tonification",4,"ex"],["Mes 3 ou 4 exercices",38,"ex"],["Ressentis, envoi, rangement",8,"bil"]],
   fiches:[
-   fiche("Échauffement","Échauffement",12,ECH_BASE,"À deux : une coche vaut pour le binôme.",["Échauffement guidé dans l'appli (5 parties).","Spécifique : les exercices du jour, à vide."],"Pouls pris.","Prêt.",null,null,null),
+   fiche("Échauffement","Échauffement",12,ECH_BASE,"Chacun coche ses 4 étapes (copie possible pour le partenaire).",["Échauffement guidé dans l'appli (4 étapes, gainage obligatoire).","Spécifique : les exercices du jour, à vide."],"Pouls pris.","Prêt.",null,null,null),
    fiche("Le mobile Tonification","Consignes",4,"Regroupement. Le professeur montre le tableau du mobile.","Le partenaire vérifie le rythme et la respiration.",
     ["Un couple au choix : 50 % × 20, 55 % × 17 ou 60 % × 15 ; 30 s à 1 min de récupération.","Rythme régulier, respiration continue : pas de vitesse.","Sensation attendue : fatigue d'une zone du corps, sans brûlure forte.","Après chaque exercice : ressenti, réserve, suite ; le partenaire coache."],
     null,"Chacun connaît sa charge sur chaque exercice.",null,null,"mobile:tonif"),
