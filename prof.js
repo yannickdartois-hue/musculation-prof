@@ -118,6 +118,16 @@ function vClasses(){
    <p><button type="button" class="lien danger" data-act="supprClasse">Supprimer cette classe</button></p></section>`:''}
   ${DEMO?'':`<section class="carte"><h3>Démonstration</h3><p class="small muted">Pour découvrir l'outil avec une classe fictive. Rien n'est enregistré : vos vraies classes et carnets ne sont pas touchés.</p><a class="bt" href="?demo">🎭 Ouvrir la démo</a></section>`}`;
 }
+/* 24/11/2026 : choisir la séance que le QR de la classe ouvre aujourd'hui (même mémoire que « Code du cours ») */
+const SQR={
+  lire(app,c){try{const m=JSON.parse(localStorage.getItem('eps-code-prof:'+app)||'{}')[c];return m&&m.d===EPSCode.jour()?String(m.s):''}catch(e){return ''}},
+  ecrire(app,c,s){try{const k='eps-code-prof:'+app,m=JSON.parse(localStorage.getItem(k)||'{}');m[c]={s:String(s),d:EPSCode.jour()};localStorage.setItem(k,JSON.stringify(m))}catch(e){}},
+  html(app,c,L){const s=SQR.lire(app,c),x=L.find(y=>String(y.v)===s),on=y=>String(y.v)===s;
+    return `<div class="sqr" style="margin:8px 0"><p style="margin:0 0 6px">${x?'Ce QR ouvre la <b>'+esc(x.n)+'</b> aujourd’hui pendant 2 h, sans code à taper. Autre séance :':'<b>Choisissez la séance</b> que ce QR ouvre aujourd’hui :'}</p><div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">${L.map(y=>`<button type="button" data-sqr="${esc(c)}|${esc(String(y.v))}" aria-pressed="${on(y)}" style="min-width:52px;min-height:48px;border-radius:12px;font-weight:800;font-size:17px;cursor:pointer;border:2px solid ${on(y)?'#15803d':'#cbd5e1'};background:${on(y)?'#15803d':'#fff'};color:${on(y)?'#fff':'#111'}">${esc(y.c)}</button>`).join('')}</div></div>`},
+  brancher(app,rouvrir){document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-sqr]');if(!b)return;e.preventDefault();e.stopPropagation();
+    const v=b.dataset.sqr,i=v.lastIndexOf('|'),c=v.slice(0,i);SQR.ecrire(app,c,v.slice(i+1));document.querySelectorAll('.qr-plein,.voile').forEach(x=>{if(x.contains(b))x.remove()});rouvrir(c)},true)}
+};
+SQR.brancher('mup',c=>montrerQR(c));
 async function qrClasse(c){
   const L=DB.classes[c];if(!L.cc){L.cc=EPSCode.nouvelleCle();sauver()}
   const cj=await EPSCode.cjDuJour('mup',c,L.cc,null);
@@ -127,7 +137,7 @@ async function qrClasse(c){
 }
 async function montrerQR(c){
   const {svg,cj}=await qrClasse(c);
-  fen(`<h2>Classe ${esc(c)} · musculation</h2><p>Appli élève : <b>📷 QR de la classe</b>.</p>${cj?`<p class="ok small">Ce QR ouvre aussi la séance <b>${esc(cj.s)}</b> aujourd'hui (2 h), sans code à taper.</p>`:`<p class="small muted">Pour que ce QR ouvre la séance du jour : « Code du cours », choisissez la séance, puis réaffichez ce QR.</p>`}<div class="qrbox">${svg}</div><button type="button" class="bt" data-fermer>Fermer</button>`,true);
+  fen(`<h2>Classe ${esc(c)} · musculation</h2><p>Appli élève : <b>📷 QR de la classe</b>.</p>${SQR.html('mup',c,SEANCES.map(s=>({v:s.id,n:s.id+' · '+s.titre,c:s.id})))}<div class="qrbox">${svg}</div><button type="button" class="bt" data-fermer>Fermer</button>`,true);
 }
 async function affiche(c){
   const {svg}=await qrClasse(c),a=document.createElement('div');a.id='affiche';
