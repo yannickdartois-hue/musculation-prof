@@ -21,6 +21,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .barre img{width:40px;height:40px;border-radius:9px}.barre .app{flex:1;font-weight:700}.barre small{display:block;font-weight:400;color:var(--repere);font-size:15px}
 .trace{height:8px;background:var(--act)}
 nav{display:flex;gap:8px;padding:10px 18px;flex-wrap:wrap;max-width:1100px;margin:0 auto}
+/* chantier 11 : sur téléphone, les 10 onglets tiennent en 4 lignes compactes au lieu d'un écran entier */
+@media(max-width:600px){nav{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px 12px}nav button{min-height:44px;padding:4px 6px;font-size:14px;justify-content:center;text-align:center}}
 nav button{min-height:52px;padding:0 18px;border-radius:14px;border:2px solid var(--trait);background:var(--craie);font-weight:700}
 nav button.ici{background:var(--act);border-color:var(--act);color:#fff}
 main{max-width:1100px;margin:0 auto;padding:0 18px 40px}
@@ -82,7 +84,7 @@ details>summary{font-weight:700}
 <link rel="stylesheet" href="eps-charte-v1.css">
 </head>
 <body>
-<header class="barre"><img src="icon-192.png" alt=""><div class="app">MUSCULATION · OUTIL PROF<small>Lycée Georges Pompidou · CA5 Terminale</small></div><button type="button" class="bt" onclick="EPSAide.ouvrir()" aria-label="Mode d’emploi">?</button></header>
+<header class="barre"><img src="icon-192.png" alt=""><div class="app">MUSCULATION · PROF<small>Lycée Georges Pompidou · CA5 Terminale</small></div><button type="button" class="bt" onclick="EPSAide.ouvrir()" aria-label="Mode d’emploi">?</button></header>
 <div class="trace"></div>
 <nav id="nav"></nav>
 <main id="main"></main>
