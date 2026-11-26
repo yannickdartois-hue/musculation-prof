@@ -253,7 +253,7 @@ const ECHELLE = [
  [9,"Maximal","Je tiens seulement quelques secondes de plus.","#f87171"],
  [10,"Supra-maximal","Je bloque, je ne peux plus finir le geste.","#dc2626"]
 ];
-const MOTS_DEPART = ["chaud","léger","ça picote","ça brûle","ça gonfle","lourd","dur","tendu","ça tremble","essoufflé","ça tape","compact","je bloque","facile","fatigué","rien"];
+const MOTS_DEPART = ["chaud","léger","ça picote","ça brûle","ça gonfle","lourd","dur","tendu","ça tremble","essoufflé","intense","compact","je bloque","facile","fatigué","rien"];
 const SENSATIONS = [
  ["locale","Fatigue d'une zone","La région travaillée est fatiguée, sans brûlure forte."],
  ["brulure","Brûlure, ça gonfle","Brûlure ou congestion dans le muscle."],
