@@ -1,9 +1,9 @@
 /* =====================================================================
    prof.js — outil prof de musculation CA5 Terminale (Lycée G. Pompidou)
-   v1.0 : classes (import Pronote, repris de gym-prof), QR de la classe, code du cours (eps-code.js).
+   v1.0 : classes (import Pronote, repris de gym-prof), QR de la classe, séance du jour (eps-code.js).
    v7.0 : carnet du professeur sur le modèle de l'outil prof demi-fond : un dossier par élève,
    séances reçues par QR de binôme, tableau de bord, séances, fiches, Note (CCF), Pilotage, exports.
-   Données : sur l'iPad (localStorage 'mup-db'). La clé du code du cours
+   Données : sur l'iPad (localStorage 'mup-db'). La clé du QR du jour
    de chaque classe est dans la sauvegarde : la garder à jour.
    ===================================================================== */
 'use strict';
@@ -111,29 +111,36 @@ function vClasses(){
    <details><summary>Ou coller des noms (un par ligne, « Prénom NOM »)</summary><textarea id="impTxt" rows="5" placeholder="Léa MARTIN&#10;Hugo BERNARD"></textarea><button type="button" class="bt" data-act="coller">Ajouter ces élèves</button></details></section>
   ${C.length?`<div class="puces">${C.map(x=>`<button type="button" class="${x===c?'ici':''}" data-classe="${esc(x)}">${esc(x)} <small>${DB.classes[x].eleves.length}</small></button>`).join('')}</div>`:'<p class="muted">Aucune classe pour l\'instant.</p>'}
   ${L?`<section class="carte act"><h3>${esc(c)} · ${L.eleves.length} élèves</h3>
-   <div class="rangee"><button type="button" class="bt act" data-act="qr">▦ QR de la classe</button><button type="button" class="bt noir" data-act="code">🔑 Code du cours</button><button type="button" class="bt" data-act="affiche">🖨 Affiche du premier cours</button></div>
-   <p class="small muted">Les binômes scannent le QR de la classe dans l'appli élève : la liste des noms s'affiche, ils choisissent les leurs. Le QR affiché un jour de cours ouvre aussi la séance choisie dans « Code du cours », sans code à taper.</p>
+   <div class="rangee"><button type="button" class="bt act" data-act="qr">▦ QR de la classe</button><button type="button" class="bt noir" data-act="qrpuiss">⚡ QR Niveau confirmé</button><button type="button" class="bt" data-act="affiche">🖨 Affiche du premier cours</button></div>
+   <p class="small muted">Les binômes scannent le QR de la classe dans l'appli élève : la liste des noms s'affiche, ils choisissent les leurs. Le QR affiché un jour de cours ouvre aussi la séance du jour (choisie sous le QR). « ⚡ QR Niveau confirmé » : à montrer au binôme qui passe au niveau confirmé en puissance.</p>
    <label class="ch" for="lien">Lien du dépôt Nuage de la classe (facultatif)</label><input id="lien" type="url" value="${esc(L.lien||'')}" placeholder="https://nuage03.apps.education.fr/s/…">
    <details><summary>Liste des élèves</summary><ol class="liste">${L.eleves.map(n=>`<li>${esc(n)}</li>`).join('')}</ol></details>
    <p><button type="button" class="lien danger" data-act="supprClasse">Supprimer cette classe</button></p></section>`:''}
   ${DEMO?'':`<section class="carte"><h3>Démonstration</h3><p class="small muted">Pour découvrir l'outil avec une classe fictive. Rien n'est enregistré : vos vraies classes et carnets ne sont pas touchés.</p><a class="bt" href="?demo">🎭 Ouvrir la démo</a></section>`}`;
 }
-/* 24/11/2026 : choisir la séance que le QR de la classe ouvre aujourd'hui (même mémoire que « Code du cours ») */
+/* 24/11/2026 : choisir la séance que le QR de la classe ouvre aujourd'hui (mémoire commune eps-code.js) */
 const SQR={
-  lire(app,c){try{const m=JSON.parse(localStorage.getItem('eps-code-prof:'+app)||'{}')[c];return m&&m.d===EPSCode.jour()?String(m.s):''}catch(e){return ''}},
-  ecrire(app,c,s){try{const k='eps-code-prof:'+app,m=JSON.parse(localStorage.getItem(k)||'{}');m[c]={s:String(s),d:EPSCode.jour()};localStorage.setItem(k,JSON.stringify(m))}catch(e){}},
-  html(app,c,L){const s=SQR.lire(app,c),x=L.find(y=>String(y.v)===s),on=y=>String(y.v)===s;
-    return `<div class="sqr" style="margin:8px 0"><p style="margin:0 0 6px">${x?'Ce QR ouvre la <b>'+esc(x.n)+'</b> aujourd’hui pendant 2 h, sans code à taper. Autre séance :':'<b>Choisissez la séance</b> que ce QR ouvre aujourd’hui :'}</p><div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">${L.map(y=>`<button type="button" data-sqr="${esc(c)}|${esc(String(y.v))}" aria-pressed="${on(y)}" style="min-width:52px;min-height:48px;border-radius:12px;font-weight:800;font-size:17px;cursor:pointer;border:2px solid ${on(y)?'#15803d':'#cbd5e1'};background:${on(y)?'#15803d':'#fff'};color:${on(y)?'#fff':'#111'}">${esc(y.c)}</button>`).join('')}</div></div>`},
-  brancher(app,rouvrir){document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-sqr]');if(!b)return;e.preventDefault();e.stopPropagation();
+  lire(app,c,L){return EPSCode.seanceDuJour(app,c,(L||[]).map(y=>String(y.v)))},   /* v2 (chantier 9) : toujours une séance proposée */
+  ecrire(app,c,s){EPSCode.choisirSeance(app,c,s)},
+  html(app,c,L){const s=SQR.lire(app,c,L),x=L.find(y=>String(y.v)===s),on=y=>String(y.v)===s;
+    return `<div class="sqr" style="margin:8px 0"><p style="margin:0 0 6px">${x?'Ce QR ouvre la <b>'+esc(x.n)+'</b> aujourd’hui (pendant 2 h après le scan). Autre séance :':'<b>Choisissez la séance</b> que ce QR ouvre aujourd’hui :'}</p><div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">${L.map(y=>`<button type="button" data-sqr="${esc(c)}|${esc(String(y.v))}" aria-pressed="${on(y)}" style="min-width:52px;min-height:48px;border-radius:12px;font-weight:800;font-size:17px;cursor:pointer;border:2px solid ${on(y)?'#15803d':'#cbd5e1'};background:${on(y)?'#15803d':'#fff'};color:${on(y)?'#fff':'#111'}">${esc(y.c)}</button>`).join('')}</div><p style="margin:10px 0 0;text-align:center"><button type="button" data-sqrprep="${esc(c)}" style="min-height:46px;padding:0 16px;border-radius:12px;font-weight:700;font-size:16px;cursor:pointer;border:2px solid #cbd5e1;background:#fff;color:#111">🗓 QR pour un autre jour · imprimer</button></p></div>`},
+  brancher(app,rouvrir,prep){document.addEventListener('click',e=>{const p=e.target.closest&&e.target.closest('[data-sqrprep]');if(p){e.preventDefault();e.stopPropagation();if(prep)prep(p.dataset.sqrprep);return}
+    const b=e.target.closest&&e.target.closest('[data-sqr]');if(!b)return;e.preventDefault();e.stopPropagation();
     const v=b.dataset.sqr,i=v.lastIndexOf('|'),c=v.slice(0,i);SQR.ecrire(app,c,v.slice(i+1));document.querySelectorAll('.qr-plein,.voile').forEach(x=>{if(x.contains(b))x.remove()});rouvrir(c)},true)}
 };
-SQR.brancher('mup',c=>montrerQR(c));
-async function qrClasse(c){
+SQR.brancher('mup',c=>montrerQR(c),c=>{const L=DB.classes[c];if(!L)return;if(!L.cc){L.cc=EPSCode.nouvelleCle();sauver()}EPSCode.preparer({app:'mup',classe:c,cle:L.cc,titre:'Musculation',seances:SEANCES.map(s=>({v:s.id,n:s.id+' · '+s.titre})),qr:async cj=>(await qrClasse(c,cj)).svg})});
+async function qrClasse(c,cjForce){
   const L=DB.classes[c];if(!L.cc){L.cc=EPSCode.nouvelleCle();sauver()}
-  const cj=await EPSCode.cjDuJour('mup',c,L.cc,null);
+  const cj=cjForce||await EPSCode.cjDuJour('mup',c,L.cc,undefined,SEANCES.map(s=>s.id));
   const txt=await encoderQR({a:'MUS',v:1,t:'C',c,l:L.eleves,u:L.lien||'',cc:L.cc,cj,ts:Math.round(Date.now()/1000)});
   let svg;try{svg=svgQR(txt)}catch(e){svg='<p class="alerte">Liste trop longue pour un seul QR.</p>'}
   return {svg,cj};
+}
+/* Chantier 9 : le niveau confirmé (puissance) ne se débloque plus avec un code tapé, mais avec ce QR (classe + jour, signé avec la clé de la classe). */
+async function qrPuissance(c){
+  const L=DB.classes[c];if(!L)return;if(!L.cc){L.cc=EPSCode.nouvelleCle();sauver()}
+  const d=EPSCode.jour(),txt=await encoderQR({a:'MUS',v:1,t:'P',c,d,k:await EPSCode.code(L.cc,c,d,'PUISS')});
+  fen(`<h2>⚡ Niveau confirmé · ${esc(c)}</h2><p>Montrez ce QR <b>au binôme</b> qui passe au niveau confirmé : dans son carnet, « Le professeur débloque » → scanner. Valable aujourd’hui seulement.</p><div class="qrbox">${svgQR(txt)}</div><button type="button" class="bt" data-fermer>Fermer</button>`,true);
 }
 async function montrerQR(c){
   const {svg,cj}=await qrClasse(c);
@@ -516,7 +523,7 @@ function vExport(){const c=classeCourante();return `<h2>Exporter · ${esc(c||'�
 const anneeSco=t=>{const d=new Date(t);return d.getMonth()>=7?d.getFullYear():d.getFullYear()-1};
 function vieux(){if(DEMO)return [];const y=anneeSco(Date.now());return Object.entries(DB.eleves).filter(([,E])=>{const ts=Math.max(0,...Object.values(E.recu||{}).map(r=>r.ts||0));return ts&&anneeSco(ts*1000)<y}).map(([k])=>k)}
 function vSauvegarde(){const V=vieux();
-  return `<h2>Sauvegarde</h2><section class="carte act"><p><b>Gardez une sauvegarde à jour</b> : elle contient vos classes, toutes les séances reçues, les notes et la <b>clé du code du cours</b> de chaque classe.</p>
+  return `<h2>Sauvegarde</h2><section class="carte act"><p><b>Gardez une sauvegarde à jour</b> : elle contient vos classes, toutes les séances reçues, les notes et la <b>clé du QR du jour</b> de chaque classe.</p>
    <div class="rangee"><button type="button" class="bt act" data-act="sauver">💾 Enregistrer la sauvegarde</button><label class="bt">📂 Restaurer une sauvegarde<input id="restFic" type="file" accept=".json" hidden></label></div>
    <p class="small muted">${DB.sauve?'Dernière sauvegarde : '+new Date(DB.sauve).toLocaleString('fr-FR'):'Pas encore de sauvegarde.'}</p></section>
    ${V.length?`<section class="carte"><h3>📦 Archiver l'année passée</h3><p class="small">${V.length} élève(s) n'ont reçu aucune séance cette année scolaire. Téléchargez l'archive, puis retirez-les de l'iPad pour garder de la place.</p><button type="button" class="bt" data-act="archiver">📦 Télécharger l'archive et retirer</button></section>`:''}
@@ -603,7 +610,7 @@ document.addEventListener('click',async ev=>{
   switch(d.act){
     case 'coller': await importerListe([], $('#impTxt').value, $('#impNom').value.trim()||prompt('Nom de la classe ou du groupe :')||'');break;
     case 'qr': montrerQR(c);break;
-    case 'code': {const L=DB.classes[c];if(!L.cc){L.cc=EPSCode.nouvelleCle();sauver()}EPSCode.prof({app:'mup',classe:c,cle:L.cc,seances:SEANCES.map(s=>({v:s.id,n:s.id+' · '+s.titre}))});break}
+    case 'qrpuiss': qrPuissance(c);break;
     case 'affiche': affiche(c);break;
     case 'supprClasse': if(confirm('Supprimer la classe '+c+' ? Les séances reçues restent dans les fiches.')){delete DB.classes[c];DB.classe='';sauver();rendre()}break;
     case 'scanner': {let n0=0;scanner(async txt=>{const r=await lireTexteQR(txt);if(!r.partiel&&!r.doublon){n0++;sauver()}return r},{titre:'QR de séance des binômes',aide:'Montrez les QR un par un devant la caméra.',onClose:()=>{sauver();rendre();if(n0)toast(n0+' binôme(s) reçu(s)')}});break}

@@ -393,7 +393,7 @@ const SEANCES = [
   tl:[["Accueil, installation",8,"inst"],["Échauffement progressif",12,"ech"],["Le mobile Puissance, les 2 niveaux",4,"ex"],["Mes 3 ou 4 exercices",36,"ex"],["Mon échelle, envoi, rangement",10,"bil"]],
   fiches:[
    fiche("Échauffement progressif","Échauffement",12,ECH_BASE,"À deux.",["Échauffement guidé, squat jump en mise en route."],"Réceptions silencieuses.","Prêt.",null,null,null),
-   fiche("Le mobile Puissance, les 2 niveaux","Consignes",4,"Regroupement. Le professeur passe ensuite débloquer le niveau confirmé (code du cours tapé sur le téléphone).","Le partenaire regarde la vitesse : dès qu'elle baisse, il dit STOP.",
+   fiche("Le mobile Puissance, les 2 niveaux","Consignes",4,"Regroupement. Le professeur passe ensuite débloquer le niveau confirmé (QR « Niveau confirmé » scanné par le binôme).","Le partenaire regarde la vitesse : dès qu'elle baisse, il dit STOP.",
     ["Découverte (tout le monde) : 30 % × 6, trajet parfait d'abord, puis vitesse.","Confirmé (sur avis du professeur) : 45 % × 5, puis 60 % × 3.","Montée la plus rapide possible, descente contrôlée, pas de rebond.","2 à 3 min de récupération : on attend, même si le partenaire a fini."],
     null,"Chacun connaît son niveau.",null,null,"mobile:puiss"),
    fiche("Mes 3 ou 4 exercices","Puissance",36,"Au moins 2 exercices nouveaux (jamais faits en S4 et S5). Chrono binôme.","Le partenaire juge la vitesse et dit STOP ; il pare au développé couché barre.",
