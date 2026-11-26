@@ -230,10 +230,31 @@ async function lireTexteQR(t){
     t=Array.from({length:M.n},(_,k)=>M.p[k+1]).join('');delete MORCEAUX[id]}
   const o=await decoderQR(t);
   if(o.t==='G')return importerGroupe(o,'qr');
+  if(o.t==='O')return codeOublie(o);
   if(o.t==='mots')throw new Error('C\'est le QR des mots et du défi (écran de cours), pas une séance.');
   if(o.t==='C'||o.t==='T')throw new Error('C\'est un QR de l\'outil prof (classe ou tirage).');
   throw new Error('QR non reconnu.');
 }
+/* Code oublié (même principe que l'appli gym) : le QR de l'élève porte l'empreinte SHA-256 de 'mue|id|code'.
+   On retrouve le code parmi les 10 000 possibles, hors ligne. Rien n'est importé (pas de doublon). */
+async function empreinteMue(id,code){
+  if(crypto.subtle){const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('mue|'+id+'|'+code));return [...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+  let h=0;for(const c of 'mue|'+id+'|'+code)h=(h*31+c.charCodeAt(0))|0;return 'x'+h}
+function empreinteSecours(id,code){let h=0;for(const c of 'mue|'+id+'|'+code)h=(h*31+c.charCodeAt(0))|0;return 'x'+h}
+async function retrouverCode(id,h){
+  const C=k=>String(k).padStart(4,'0');
+  if(h[0]==='x'){for(let k=0;k<10000;k++)if(empreinteSecours(id,C(k))===h)return C(k);return null}
+  if(!crypto.subtle)throw new Error('Cet appareil ne peut pas lire ce QR (ouvrez l\'outil en https).');
+  for(let d=0;d<10000;d+=500){const r=await Promise.all(Array.from({length:500},(_,j)=>empreinteMue(id,C(d+j)).then(x=>x===h?C(d+j):null)));const t=r.find(Boolean);if(t)return t}
+  return null}
+async function codeOublie(o){if(DEMO)throw new Error('Pas de code oublié en démo.');
+  if(typeof o.i!=='string'||typeof o.h!=='string'||!o.i||!o.h)throw new Error('QR « code oublié » incomplet : refaites-le.');
+  const code=await retrouverCode(o.i,o.h);
+  if(!code)throw new Error('Code introuvable : ce QR est abîmé. Refaites-le sur le téléphone du binôme.');
+  const noms=(o.n||[]).map(String);
+  setTimeout(()=>{const d=fen(`<h2>Code du binôme</h2><p>${noms.map(esc).join(' · ')}${o.c?' · '+esc(o.c):''}</p><p class="code-oublie" style="font:900 72px/1.1 ui-monospace,monospace;letter-spacing:.2em;margin:18px 0;text-align:center">${esc(code)}</p><p class="small">Dites-le au binôme (sans l'afficher à toute la classe) : il le tape pour ouvrir son carnet.</p><button class="bt act" type="button" data-fermer>Fermer</button>`);d.style.zIndex=70},300);
+  journal('🔑 Code oublié rendu : '+noms.join(' & ')+(o.c?' ('+o.c+')':''));sauver();
+  return {msg:'Code affiché · '+noms.join(' & '),doublon:true,sansCompte:true}}
 /* scanner caméra (repris de l'outil prof demi-fond, scan.js) */
 function scanner(onCode,opts){
   opts=opts||{};const v=document.createElement('div');v.className='scan-voile';
@@ -249,7 +270,7 @@ function scanner(onCode,opts){
     if(video.readyState>=2&&video.videoWidth){const w=video.videoWidth,h=video.videoHeight,k=Math.min(1,720/Math.max(w,h));cv.width=Math.round(w*k);cv.height=Math.round(h*k);ctx.drawImage(video,0,0,cv.width,cv.height);
       const r=window.jsQR(ctx.getImageData(0,0,cv.width,cv.height).data,cv.width,cv.height,{inversionAttempts:'dontInvert'});
       if(r&&r.data&&(r.data!==dernier||Date.now()-dernierT>4000)){dernier=r.data;dernierT=Date.now();
-        try{const res=await onCode(r.data);if(!res.partiel)n++;cpt.textContent=n+' binôme'+(n>1?'s':'');message(res.msg,res.doublon?null:true);try{navigator.vibrate&&navigator.vibrate(80)}catch(e){}}catch(e){message(e.message||String(e),false)}}}
+        try{const res=await onCode(r.data);if(!res.partiel&&!res.sansCompte)n++;cpt.textContent=n+' binôme'+(n>1?'s':'');message(res.msg,res.doublon?null:true);try{navigator.vibrate&&navigator.vibrate(80)}catch(e){}}catch(e){message(e.message||String(e),false)}}}
     timer=setTimeout(tic,160)}
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){message('La caméra n\'est pas disponible sur cet appareil.',false);return fermer}
   navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false}).then(s=>{if(fini){s.getTracks().forEach(t=>t.stop());return}stream=s;video.srcObject=s;video.play().catch(()=>{});tic()}).catch(()=>message('Autorisez l\'accès à la caméra (réglages), puis réessayez.',false));
