@@ -199,7 +199,7 @@ function importerGroupe(o,src){
   const tout=res.every(r=>r.st==='doublon'),hl=res.filter(r=>horsListe(o.c,r.nom)).map(r=>r.nom);
   const msg=`${o.s} · ${res.map(r=>pre(r.nom)+(r.st==='doublon'?' (déjà reçu)':r.st==='remplacé'?' (remplacé)':'')).join(' & ')}${o.c?' · '+o.c:''}`;
   journal((tout?'= ':'✓ ')+msg+(hl.length?' · ⚠ hors liste : '+hl.join(', '):''),hl.length>0);
-  DB.recus[o.id||o.s+o.ts]={s:o.s,c:o.c,n:res.length,d:new Date().toISOString(),st:tout?'doublon':'ok'};
+  DB.recus[o.id||o.s+o.ts]={s:o.s,c:o.c,n:res.length,d:new Date().toISOString(),st:tout?'doublon':'ok'};SCX={c:o.c||'',s:o.s};
   return {msg:(tout?'Déjà reçu : rien de changé. ':'')+msg,doublon:tout,n:res.length};
 }
 /* fichier du carnet (Nuage) : chaque séance de chaque élève */
@@ -262,11 +262,20 @@ async function codeOublie(o){if(DEMO)throw new Error('Pas de code oublié en dé
   setTimeout(()=>{const d=fen(`<h2>Code du binôme</h2><p>${noms.map(esc).join(' · ')}${o.c?' · '+esc(o.c):''}</p><p class="code-oublie" style="font:900 72px/1.1 ui-monospace,monospace;letter-spacing:.2em;margin:18px 0;text-align:center">${esc(code)}</p><p class="small">Dites-le au binôme (sans l'afficher à toute la classe) : il le tape pour ouvrir son carnet.</p><button class="bt act" type="button" data-fermer>Fermer</button>`);d.style.zIndex=70},300);
   journal('🔑 Code oublié rendu : '+noms.join(' & ')+(o.c?' ('+o.c+')':''));sauver();
   return {msg:'Code affiché · '+noms.join(' & '),doublon:true,sansCompte:true}}
+let SCX=null;   /* classe et séance du dernier QR lu (pour « Encore N élèves à scanner ») */
+/* v. « Encore N élèves à scanner » affiché dans le scanner, sous le nom des élèves lus (règle commune des outils prof).
+   manque : noms des élèves de la classe sans séance reçue (hors absents notés à l'appel) ; lib : « classe · séance ». */
+function resteBloc(manque,total,lib,nAbs){if(!total)return '';const s=manque.length>1?'s':'',ab=nAbs?` · ${nAbs} absent${nAbs>1?'s':''} non compté${nAbs>1?'s':''}`:'';
+  return manque.length?`<div class="scan-reste" style="background:#fff7ed;border:2px solid #fb923c;border-radius:12px;padding:8px 10px;color:#14181f;text-align:left"><b style="font-size:20px">Encore ${manque.length} élève${s} à scanner</b> <span style="font-size:14px">· ${esc(lib)}${ab}</span><div style="font-size:15px;margin-top:4px;line-height:1.35">${manque.map(esc).join(', ')}</div></div>`
+    :`<div class="scan-reste ok" style="background:#dcfce7;border:2px solid #22c55e;border-radius:12px;padding:8px 10px;color:#14532d;text-align:left"><b style="font-size:20px">✓ Toute la classe est scannée</b> <span style="font-size:14px">· ${esc(lib)}${ab}</span></div>`}
+function resteScan(){const x=SCX||{c:classeCourante(),s:classeCourante()?seanceAppelMu(classeCourante()):''};if(!x.c||!SIDS.includes(x.s))return '';
+  const K=elevesClasse(x.c),abs=K.filter(k=>apStatut(x.c,x.s,k,null).s==='a'||(DB.eleves[k]&&DB.eleves[k].abs&&DB.eleves[k].abs[x.s])),m=K.filter(k=>!abs.includes(k)&&!(DB.eleves[k]&&DB.eleves[k].recu&&DB.eleves[k].recu[x.s]));
+  return resteBloc(m.map(nomDeK),K.length,x.c+' · '+x.s,abs.length)}
 /* scanner caméra (repris de l'outil prof demi-fond, scan.js) */
 function scanner(onCode,opts){
   opts=opts||{};const v=document.createElement('div');v.className='scan-voile';
   v.innerHTML=`<div class="scan-fen" role="dialog" aria-modal="true"><h3>${opts.titre||'Scanner un QR code'}</h3><div class="scan-cadre"><video playsinline muted></video><div class="scan-viseur"></div></div>
-    <p class="scan-msg">${opts.aide||'Placez le QR code dans le cadre.'}</p><div class="scan-bas"><span class="scan-compte"></span><button type="button" class="bt noir scan-fin">Terminé</button></div></div>`;
+    <p class="scan-msg">${opts.aide||'Placez le QR code dans le cadre.'}</p><div class="scan-manque" style="margin:4px 0;max-height:24vh;overflow:auto">${opts.reste?opts.reste():''}</div><div class="scan-bas"><span class="scan-compte"></span><button type="button" class="bt noir scan-fin">Terminé</button></div></div>`;
   document.body.appendChild(v);
   const video=v.querySelector('video'),msg=v.querySelector('.scan-msg'),cpt=v.querySelector('.scan-compte'),cv=document.createElement('canvas'),ctx=cv.getContext('2d',{willReadFrequently:true});
   let stream=null,fini=false,dernier='',dernierT=0,n=0,timer=null;
@@ -277,7 +286,7 @@ function scanner(onCode,opts){
     if(video.readyState>=2&&video.videoWidth){const w=video.videoWidth,h=video.videoHeight,k=Math.min(1,720/Math.max(w,h));cv.width=Math.round(w*k);cv.height=Math.round(h*k);ctx.drawImage(video,0,0,cv.width,cv.height);
       const r=window.jsQR(ctx.getImageData(0,0,cv.width,cv.height).data,cv.width,cv.height,{inversionAttempts:'dontInvert'});
       if(r&&r.data&&(r.data!==dernier||Date.now()-dernierT>4000)){dernier=r.data;dernierT=Date.now();
-        try{const res=await onCode(r.data);if(!res.partiel&&!res.sansCompte)n++;cpt.textContent=n+' binôme'+(n>1?'s':'');message(res.msg,res.doublon?null:true);try{navigator.vibrate&&navigator.vibrate(80)}catch(e){}}catch(e){message(e.message||String(e),false)}}}
+        try{const res=await onCode(r.data);if(!res.partiel&&!res.sansCompte)n++;cpt.textContent=n+' binôme'+(n>1?'s':'');message(res.msg,res.doublon?null:true);if(opts.reste){const z=v.querySelector('.scan-manque');if(z)z.innerHTML=opts.reste()}try{navigator.vibrate&&navigator.vibrate(80)}catch(e){}}catch(e){message(e.message||String(e),false)}}}
     timer=setTimeout(tic,160)}
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){message('La caméra n\'est pas disponible sur cet appareil.',false);return fermer}
   navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false}).then(s=>{if(fini){s.getTracks().forEach(t=>t.stop());return}stream=s;video.srcObject=s;video.play().catch(()=>{});tic()}).catch(()=>message('Autorisez l\'accès à la caméra (réglages), puis réessayez.',false));
@@ -773,7 +782,7 @@ document.addEventListener('click',async ev=>{
     case 'qrpuiss': qrPuissance(c);break;
     case 'affiche': affiche(c);break;
     case 'supprClasse': if(confirm('Supprimer la classe '+c+' ? Les séances reçues restent dans les fiches.')){delete DB.classes[c];DB.classe='';sauver();rendre()}break;
-    case 'scanner': {let n0=0;scanner(async txt=>{const r=await lireTexteQR(txt);if(!r.partiel&&!r.doublon){n0++;sauver()}return r},{titre:'QR de séance des binômes',aide:'Montrez les QR un par un devant la caméra.',onClose:()=>{sauver();rendre();if(n0)toast(n0+' binôme(s) reçu(s)')}});break}
+    case 'scanner': {let n0=0;SCX=null;scanner(async txt=>{const r=await lireTexteQR(txt);if(!r.partiel&&!r.doublon){n0++;sauver()}return r},{titre:'QR de séance des binômes',aide:'Montrez les QR un par un devant la caméra.',reste:resteScan,onClose:()=>{sauver();rendre();if(n0)toast(n0+' binôme(s) reçu(s)')}});break}
     case 'reprendre': {let n=0;elevesClasse(c).forEach(k=>{const E=DB.eleves[k],m=maxRep(repDe(k));if(!E||!m)return;const N=DB.notes[k]=DB.notes[k]||{};
       if(N.a2==null||N.a2===''){const p=ptsDeg(indicAFL2(E).deg,m[0]);if(p!=null){N.a2=p;n++}}if(N.a3==null||N.a3===''){const p=ptsDeg(indicAFL3(E).deg,m[1]);if(p!=null){N.a3=p;n++}}});
       sauver();rendre();toast(n+' case(s) remplie(s) ; vos notes déjà saisies n\'ont pas bougé.');break}
