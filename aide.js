@@ -2,7 +2,7 @@
 window.EPS_AIDE={appli:'Musculation · Prof',bouton:false,publics:[{id:'prof',titre:'Professeur',chapitres:[
  {t:'Premier cours',html:`<ol><li><b>Classes → Importer une liste Pronote</b> (xlsx, xls ou csv). Pour un groupe de Terminale, écrivez d'abord son nom.</li><li><span class="bouton">🖨 Affiche du premier cours</span> : une page A4 avec le QR pour installer l'appli et le QR de la classe.</li><li>Chaque binôme scanne le QR de la classe dans l'appli élève, touche ses deux noms dans la liste et choisit un code secret.</li></ol>`},
 {t:'📋 Appel',html:`<ol>
-<li>Onglet <b>Appel</b> : un bouton par statut pour chaque élève — <b>P</b> présent, <b>A</b> absent, <b>I</b> inapte, <b>IP</b> inapte partiel. Absent et inapte sont toujours distincts.</li>
+<li>Onglet <b>Appel</b> : tout le monde est présent par défaut. <b>Touche un nom</b> : Absent → Inapte → Inapte partiel → Présent (rouge, orange, jaune). <b>Appui long</b> sur un nom : précisions (retard, oubli de tenue, absence justifiée, oubli d’envoi) et fiche de l’élève. « ✓ Appel terminé » enregistre les présents. Pointillés = statut proposé d’après ce qui est reçu. Absent et inapte sont toujours distincts.</li>
 <li>Toucher le statut actif l’enlève. On peut changer à tout moment pendant le cours ; « Les non renseignés : présents » complète d’un coup.</li>
 <li>Précisions cumulables : en retard, oubli de tenue, absence justifiée, oubli d’envoi (carnet non reçu).</li>
 <li>Statut proposé (pointillés) d’après le carnet reçu : séance reçue = présent, absent coché = absent. ⚠ carnet non reçu : rien n’est arrivé du binôme. La séance affichée est celle du QR du jour. L’appel ne change pas la note.</li>
