@@ -206,9 +206,10 @@ function echBilan(wc, n, jour){
 }
 const imgEchauf = id => (IMAGES_AT.includes(id) ? 'img/ateliers/' : 'img/echauf/') + id + '.jpg';
 const imgAtelier = id => IMAGES_AT.includes(id) ? 'img/ateliers/' + id + '.jpg' : IMAGES_SVG.includes(id) ? 'img/ateliers/' + id + '.svg' : null;
-/* v2.0 : le menu = 14 ateliers avec charges. Circuit de S1 sur les 14 (4 min par atelier), en alternant haut et bas du corps. */
+/* v2.0 : le menu = 14 ateliers avec charges. Circuit de S1 sur les 14 (4 min par atelier). */
 const MENU = ATELIERS.filter(a => a.menu).map(a => a.id);
-const CIRCUIT_S1 = ["dc","squath","rowh","fentes","dm","sdtj","curlb","hip","extri","rowb","tirage","dch","pullover","oiseau"];
+/* 28/11/2026 : ordre de la salle donné par Yannick (plan et fiches S1 : 1 à 14, puis 15 squat et 16 gainage au poids du corps) */
+const CIRCUIT_S1 = ["fentes","curlb","squath","dc","rowh","sdtj","hip","dm","tirage","extri","rowb","dch","pullover","oiseau"];
 const ATELIERS_TEST = MENU.slice();   // S2-S3 : chaque élève en teste 4 à 5 par séance (objectif 8 à 10)
 const OBJ_TESTS = [8, 10];
 
@@ -304,10 +305,10 @@ const SEANCES = [
     ["Les 6 règles de sécurité (outil Sécurité).","Montrer le pareur au développé couché.","Montrer « souffler sur l'effort ».","Montrer comment charger une barre : disques des deux côtés, serrés."],
     "Jamais d'effort à 100 %, jamais moins de 3 répétitions.","Chacun sait dire qui pare au développé couché.",null,null,"regles"),
    fiche("Circuit : ateliers 1 à 7","Circuit",28,"Un binôme par atelier au départ. 4 min par atelier, puis on tourne au signal dans l'ordre des numéros.","Chacun fait 2 × 10 répétitions à charge légère pendant que l'autre observe, puis on change. Le partenaire coche « fait » dans l'appli.",
-    ["Lire la fiche de l'atelier dans l'appli (placement, respiration, sécurité).","Charge légère : on apprend le geste, on ne cherche pas à forcer.","2 × 10 répétitions chacun, en alternance.","Au signal : ranger les disques de l'atelier et passer au suivant."],
+    ["Lire la fiche de l'atelier dans l'appli (placement, respiration, sécurité).","Charge légère : on apprend le geste, on ne cherche pas à forcer.","2 × 10 répétitions chacun, en alternance.","Au signal : ranger les disques de l'atelier et passer au suivant.","Soulevé de terre jambes semi-tendues (atelier 6) : le professeur vérifie le dos plat de chacun."],
     "Précision du geste avant la charge.","Les 7 ateliers faits avec une technique correcte.","Barre seule, haltères plus légers.","Descente lente (3 s).","circuit:1"),
    fiche("Circuit : ateliers 8 à 14","Circuit",28,"Même fonctionnement : 4 min par atelier, on tourne au signal.","Le partenaire observe : amplitude, dos, respiration. Il le dit tout de suite.",
-    ["Suite du circuit dans l'ordre des numéros.","Chacun 2 × 10 répétitions, charge légère.","Un conseil du partenaire à chaque atelier.","Soulevé de terre jambes semi-tendues : le professeur vérifie le dos plat de chacun."],
+    ["Suite du circuit dans l'ordre des numéros.","Chacun 2 × 10 répétitions, charge légère.","Un conseil du partenaire à chaque atelier.","Extension triceps barre (atelier 10) : un pareur près de la tête."],
     "Précision du geste avant la charge.","Les 14 ateliers découverts.","Barre seule.","Descente lente (3 s).","circuit:2"),
    fiche("Je me situe, envoi, rangement","Fin de séance",5,"Disques rangés sur les portants, barres et haltères rangés. Chaque élève remplit « Je me situe » dans l'appli.","Un élève du binôme envoie le carnet (QR ou fichier).",
     ["3 min : questionnaire « Je me situe » ; l'appli suggère un mobile.","2 min : rangement complet.","1 min : envoi du carnet, puis bilan : quel mot as-tu choisi en fin d'échauffement ?"],
