@@ -389,6 +389,9 @@ const APA={db:()=>DB,sauver:()=>sauver(),rendre:()=>{const y=scrollY;rendre();sc
   nom:k=>nomDeK(k),nomSeance:s=>s,autoTxt:'d’après le carnet reçu',
   autoDe:(k,S)=>{const E=DB.eleves[k];if(E&&E.abs&&E.abs[S])return {s:'a',info:'absent selon le carnet'};if(E&&E.recu&&E.recu[S])return {s:'p',info:'carnet reçu'};return {nonRecu:true}}};
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-aps]');if(!b)return;e.preventDefault();e.stopPropagation();DB.apS={s:b.dataset.aps,d:apJour(),c:classeCourante()};sauver();rendre()},true);
+/* lien vers le cahier de textes (résumés Pronote) de l'écran de cours du cycle */
+const CAHIER_URL='https://yannickdartois-hue.github.io/cycle-musculation/index.html#cahier';
+function cahierLien(){return `<a href="${CAHIER_URL}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;min-height:56px;margin:10px 0 14px;padding:10px 14px;border-radius:14px;border:2px solid #334155;background:#fff;color:#1c2128;text-decoration:none;font-weight:800;font-size:17px"><span style="font-size:24px">📋</span><span>Cahier de textes · résumés à coller dans Pronote<small style="display:block;font-weight:400;font-size:14px;color:#5b6470">Ouvre l’écran de cours du cycle (texte de chaque séance, PDF, Word)</small></span></a>`}
 /* ===================== Appel (chantier 10, 26/11/2026) =====================
    Repris du module d'appel de Demi-fond et mis à niveau. Code propre à cet outil (copie autonome).
    4 statuts exclusifs : Présent · Absent · Inapte · Inapte partiel (absent ≠ inapte, partout).
@@ -757,7 +760,7 @@ function exporter(type){const c=classeCourante();if(!c)return toast('Choisissez 
   if(type==='json'){const o={app:'musculation-prof',v:7,classe:c,exporte:new Date().toISOString(),cfg:DB.cfg,eleves:Object.fromEntries(K.filter(k=>DB.eleves[k]).map(k=>[k,DB.eleves[k]])),notes:Object.fromEntries(K.filter(k=>DB.notes[k]).map(k=>[k,DB.notes[k]]))};
     return telecharger('muscu_classe_'+f+'_'+j+'.json',JSON.stringify(o,null,1))}
 }
-function vExport(){const c=classeCourante();return `<h2>Exporter · ${esc(c||'—')}</h2>${choixClasse()}<section class="carte"><div class="rangee"><button type="button" class="bt act" data-exp="notes">📊 Notes et appréciations (CSV, Pronote)</button><button type="button" class="bt" data-exp="saisies">📋 Saisies des élèves par séance (CSV)</button><button type="button" class="bt" data-exp="json">🗂 Classe complète (JSON)</button></div>
+function vExport(){const c=classeCourante();return `<h2>Exporter · ${esc(c||'—')}</h2>${cahierLien()}${choixClasse()}<section class="carte"><div class="rangee"><button type="button" class="bt act" data-exp="notes">📊 Notes et appréciations (CSV, Pronote)</button><button type="button" class="bt" data-exp="saisies">📋 Saisies des élèves par séance (CSV)</button><button type="button" class="bt" data-exp="json">🗂 Classe complète (JSON)</button></div>
   <p class="small muted">Fiche individuelle : ouvrez la fiche de l'élève puis « 🖨 Imprimer la fiche » (ou enregistrer en PDF). Le CSV s'ouvre dans Excel ou LibreOffice ; colonnes séparées par des points-virgules.</p></section>`}
 /* ---------- Sauvegarde et archivage annuel ---------- */
 const anneeSco=t=>{const d=new Date(t);return d.getMonth()>=7?d.getFullYear():d.getFullYear()-1};
